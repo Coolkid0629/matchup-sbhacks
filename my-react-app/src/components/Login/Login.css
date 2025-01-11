@@ -107,3 +107,100 @@
     font-size: 1.75rem;
   }
 }
+
+/* New modern styling additions */
+.form-input {
+  width: 100%;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+}
+
+.form-input:hover {
+  background-color: rgba(106, 13, 173, 0.02);
+}
+
+.interests-section {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.interests-title {
+  color: #6a0dad;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.category-title {
+  color: #555;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.interest-checkbox {
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.interest-checkbox:hover {
+  transform: translateX(3px);
+}
+
+.form-check-input {
+  border-color: #6a0dad;
+  transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+  background-color: #6a0dad;
+  border-color: #6a0dad;
+}
+
+.form-check-label {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.bio-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  resize: vertical;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.bio-textarea:focus {
+  outline: none;
+  border-color: #6a0dad;
+  box-shadow: 0 2px 8px rgba(106, 13, 173, 0.1);
+}
+
+.bio-label {
+  display: block;
+  text-align: left;
+  color: #555;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.interests-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.interest-item {
+  text-align: left;
+  padding: 8px;
+}
