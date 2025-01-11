@@ -60,6 +60,7 @@
   border-radius: 0.5rem !important;
   font-weight: 500 !important;
   transition: all 0.3s ease !important;
+  color: #ffffff !important;
 }
 
 .submit-button:hover {
