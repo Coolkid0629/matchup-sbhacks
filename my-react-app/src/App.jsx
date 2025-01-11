@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -13,12 +11,10 @@ function App() {
   return (
     <Router>
       <NavbarComponent/>
-      <div> 
       <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login"  element={<Login />} />
       </Routes>
-      </div>
     </Router>
   )
 }

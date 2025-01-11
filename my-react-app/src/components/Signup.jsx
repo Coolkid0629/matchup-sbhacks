@@ -7,9 +7,9 @@ import Login from './Login/Login.jsx';
 function Signup() {
   return (
     <div className="login-container">
+      <Form className="login-form">
       <h2 className="login-title">Sign Up</h2>
       <p className="login-subtitle">Find friends today!</p>
-      <Form className="login-form">
         <Form.Group className="mb-3" controlId="formGroupEmail">
           <Form.Label className="form-label">Email: </Form.Label>
           <Form.Control 
