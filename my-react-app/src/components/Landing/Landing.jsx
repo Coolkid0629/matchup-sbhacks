@@ -22,7 +22,7 @@ const Landing = () => {
           <p>in crypto</p>
         </div>
         <div className="feature-card">
-          <h3>500+</h3>
+          <h3>50+</h3>
           <p>eating locations</p>
         </div>
       </div>
