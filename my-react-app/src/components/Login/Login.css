@@ -40,31 +40,34 @@
 }
 
 .form-input {
-  border: 1px solid rgba(143, 0, 255, 0.2) !important;
-  border-radius: 0.5rem !important;
+  border: none !important;
+  border-bottom: 1px solid #8f00ff !important;
   padding: 0.75rem 1rem !important;
   transition: all 0.3s ease !important;
+  margin-bottom: 1.5rem !important;
+  background-color: transparent !important;
 }
 
 .form-input:focus {
-  border-color: #8f00ff !important;
-  box-shadow: 0 0 0 0.2rem rgba(143, 0, 255, 0.25) !important;
+  box-shadow: 0 0 0 0.2rem rgba(143, 0, 255, 0.15) !important;
+  outline: none !important;
 }
 
 .submit-button {
   width: 100%;
   padding: 0.75rem !important;
   margin-top: 1.5rem !important;
-  background-color: #8f00ff !important;
-  border-color: #8f00ff !important;
+  background-color: transparent !important;
+  color: #8f00ff !important;
+  border: 1px solid #8f00ff !important;
   border-radius: 0.5rem !important;
   font-weight: 500 !important;
   transition: all 0.3s ease !important;
+  font-size: 1.1rem !important;
 }
 
 .submit-button:hover {
-  background-color: #7000cc !important;
-  border-color: #7000cc !important;
+  background: rgba(143, 0, 255, 0.1) !important;
 }
 
 .login-footer {
