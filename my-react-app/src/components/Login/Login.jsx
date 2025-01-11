@@ -7,9 +7,9 @@ import "./Login.css";
 function Login() {
   return (
     <div className="login-container">
-      <h2 className="login-title">Welcome Back</h2>
-      <p className="login-subtitle">Please login to your account</p>
       <Form className="login-form">
+        <h2 className="login-title">Welcome Back</h2>
+        <p className="login-subtitle">Please login to your account</p>
         <Form.Group className="mb-3" controlId="formGroupUsername">
           <Form.Label className="form-label">Username: </Form.Label>
           <Form.Control
