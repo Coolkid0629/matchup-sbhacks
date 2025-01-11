@@ -3,7 +3,8 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import NavbarComponent from './components/NavbarComponent'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Login from './components/Login/Login.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
