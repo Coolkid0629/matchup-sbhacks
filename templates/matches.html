@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunch Matches</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .match-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+        .match-card h3 { margin-top: 0; }
+    </style>
+</head>
+<body>
+    <h1>Lunch Matches</h1>
+    <div id="matches">
+        {% for match in matches %}
+        <div class="match-card">
+            <h3>{{ match.user }} matched with {{ match.match }}</h3>
+            <p><strong>Common Interests:</strong> {{ match.common_interests | join(", ") }}</p>
+            <p><strong>Similarity Score:</strong> {{ match.similarity }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

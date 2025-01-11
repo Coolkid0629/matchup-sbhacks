@@ -1,0 +1,60 @@
+[
+    {
+        "user": "John",
+        "match": "Lucas",
+        "common_interests": [],
+        "similarity": 0.989199705613495
+    },
+    {
+        "user": "Emma",
+        "match": "Lucas",
+        "common_interests": [],
+        "similarity": 0.9888475862700887
+    },
+    {
+        "user": "Sam",
+        "match": "Olivia",
+        "common_interests": [
+            "photography"
+        ],
+        "similarity": 0.93894661665045
+    },
+    {
+        "user": "Alice",
+        "match": "Mike",
+        "common_interests": [],
+        "similarity": 0.9504815327101286
+    },
+    {
+        "user": "Mike",
+        "match": "Emma",
+        "common_interests": [],
+        "similarity": 0.9743355922653231
+    },
+    {
+        "user": "Lucas",
+        "match": "John",
+        "common_interests": [],
+        "similarity": 0.989199705613495
+    },
+    {
+        "user": "Olivia",
+        "match": "Sam",
+        "common_interests": [
+            "photography"
+        ],
+        "similarity": 0.93894661665045
+    },
+    {
+        "user": "Ethan",
+        "match": "Emma",
+        "common_interests": [],
+        "similarity": 0.9271726499455307
+    },
+    {
+        "user": "Lily",
+        "match": "John",
+        "common_interests": [],
+        "similarity": 0.9824763780757723
+    }
+]

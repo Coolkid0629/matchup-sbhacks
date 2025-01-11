@@ -1,0 +1,16 @@
+[
+    {
+        "name": "user1",
+        "email": "user1@gmail.com",
+        "password": "1",
+        "interests": "red, green. blue",
+        "lunch_time": "12:00 PM"
+    },
+    {
+        "name": "user2",
+        "email": "user2@gmail.com",
+        "password": "1",
+        "interests": "red",
+        "lunch_time": "12:00 PM"
+    }
+]
