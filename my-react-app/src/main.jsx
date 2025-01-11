@@ -4,10 +4,10 @@ import './index.css'
 import App from './App.jsx'
 import Login from './components/Login/Login.jsx'
 import Signup from './components/Signup.jsx'
+import NavbarComponent from './components/NavbarComponent.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Signup />
-    <App />
+    <NavbarComponent />
   </StrictMode>,
-)
+) 
