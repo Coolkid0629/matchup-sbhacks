@@ -7,29 +7,32 @@ import Login from './Login/Login.jsx';
 function Signup() {
   return (
     <div className="login-container">
+      <h2 className="login-title">Sign Up</h2>
+      <p className="login-subtitle">Find friends today!</p>
       <Form className="login-form">
-        <h2 className="login-title">SIGN UP</h2>
-        
-        <Form.Group className="mb-4" controlId="formBasicEmail">
+        <Form.Group className="mb-3" controlId="formGroupEmail">
+          <Form.Label className="form-label">Email: </Form.Label>
           <Form.Control 
             type="email" 
-            placeholder="Enter email"
+            placeholder="Enter your email"
             className="form-input"
           />
         </Form.Group>
 
-        <Form.Group className="mb-4" controlId="formBasicPassword">
+        <Form.Group className="mb-3" controlId="formGroupPassword">
+          <Form.Label className="form-label">Password: </Form.Label>
           <Form.Control 
             type="password" 
-            placeholder="Password"
+            placeholder="Create a password"
             className="form-input"
           />
         </Form.Group>
 
-        <Form.Group className="mb-4" controlId="formBasicConfirmPassword">
+        <Form.Group className="mb-3" controlId="formGroupConfirmPassword">
+          <Form.Label className="form-label">Confirm Password: </Form.Label>
           <Form.Control 
             type="password" 
-            placeholder="Confirm Password"
+            placeholder="Confirm your password"
             className="form-input"
           />
         </Form.Group>
@@ -100,14 +103,14 @@ function Signup() {
         <Button 
           variant="primary" 
           type="submit" 
-          className="submit-button w-100">
+          className="submit-button">
           Sign Up
         </Button>
 
-        <div className="text-center mt-3">
+        <div className="login-footer">
           <p>
             Already have an account?{" "}
-            <a href="login">
+            <a href="login" className="sign-up">
               Login
             </a>
           </p>
