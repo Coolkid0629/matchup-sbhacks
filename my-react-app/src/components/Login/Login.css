@@ -5,13 +5,13 @@
   justify-content: center;
   min-height: 100vh;
   padding: 2rem;
-  padding-top: 5rem; /* Account for fixed navbar */
-  background: rgba(255, 255, 255, 0.5);
+  padding-top: 7rem; /* Account for fixed navbar */
+  background: linear-gradient(135deg, rgba(143, 0, 255, 0.1), rgba(112, 0, 204, 0.1));
 }
 
 .login-form {
   width: 100%;
-  max-width: 400px;
+  max-width: 600px;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
@@ -96,7 +96,7 @@
 @media (max-width: 768px) {
   .login-container {
     padding: 1rem;
-    padding-top: 4rem;
+    padding-top: 6rem;
   }
 
   .login-form {
