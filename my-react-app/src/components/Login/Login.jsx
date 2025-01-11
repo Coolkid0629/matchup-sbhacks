@@ -11,7 +11,7 @@ function Login() {
       <p className="login-subtitle">Please login to your account</p>
       <Form className="login-form">
         <Form.Group className="mb-3" controlId="formGroupUsername">
-          <Form.Label className="form-label">Username</Form.Label>
+          <Form.Label className="form-label">Username: </Form.Label>
           <Form.Control
             className="form-input"
             type="text"
@@ -19,7 +19,7 @@ function Login() {
           />
         </Form.Group>
         <Form.Group className="mb-3" controlId="formGroupPassword">
-          <Form.Label className="form-label">Password</Form.Label>
+          <Form.Label className="form-label">Password: </Form.Label>
           <Form.Control
             className="form-input"
             type="password"

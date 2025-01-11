@@ -1,8 +1,16 @@
+/* Body background color */
+body {
+  background-color: #e9cced; /* Light purple background */
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
 /* Container styling */
 .login-container {
-  background: linear-gradient(135deg, #ffffff, #f7f7ff);
+  background: linear-gradient(135deg, #ffffff, #f7f7ff); /* White to light gradient */
   max-width: 400px;
-  margin: 50px auto;
+  margin: 100px auto;
   padding: 40px 30px;
   border-radius: 15px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -26,21 +34,23 @@
 /* Form styling */
 .login-form .form-label {
   font-weight: bold;
-  color: #6a0dad;
+  color: #000000; /* Changed color to black */
 }
 
 .login-form .form-input {
-  border: 2px solid #6a0dad;
-  border-radius: 8px;
+  border: none; /* Removed the border */
+  border-bottom: 2px solid #6a0dad; /* Bottom border only */
+  border-radius: 0; /* Removes any rounded corners */
   padding: 12px;
   font-size: 1rem;
-  transition: 0.3s;
+  background-color: transparent; /* Transparent input background */
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .login-form .form-input:focus {
   outline: none;
-  box-shadow: 0 0 8px rgba(106, 13, 173, 0.4);
-  border-color: #6a0dad;
+  box-shadow: 0 2px 8px rgba(106, 13, 173, 0.2); /* Subtle shadow on focus */
+  border-bottom: 2px solid #9340ff; /* Purple bottom border on focus */
 }
 
 /* Button styling */
