@@ -12,6 +12,12 @@ const Navbar = () => {
     setUsername(username);
     setIsLoggedIn(!!username && !!userpass);
   }, []);
+  function handleLogout() {
+    Cookies.remove('username');
+    Cookies.remove('userpass');
+    setIsLoggedIn(false);
+    setUsername('');
+  }
   return (
     <nav className="navbar">
       <div className="navbar-brand">
@@ -39,6 +45,7 @@ const Navbar = () => {
           <>
             <b>{username}</b>
             <a href="/profile" className="auth-btn login">Profile</a>
+            <button href="/" className='auth-btn signup' onClick={handleLogout}>Logout</button>
           </>
         )}
       </div>
