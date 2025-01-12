@@ -18,7 +18,7 @@ def create_tables():
         cursor.execute("USE lunchLink;")
         cursor.execute("DROP TABLE IF EXISTS user_profiles;")
         create_users_table = """
-        CREATE ROWSTORE TABLE IF NOT EXISTS user_profiles (
+        CREATE ROWSTORE TABLE user_profiles (
             id INT PRIMARY KEY AUTO_INCREMENT,
             name VARCHAR(100),
             email VARCHAR(200) NOT NULL,
@@ -27,7 +27,7 @@ def create_tables():
             interests TEXT,
             lunch_time VARCHAR(50),
             status VARCHAR(20) DEFAULT 'active',
-            wallet_address VARCHAR(100),
+            profile_picture VARCHAR(255),  -- Column to store the profile picture path
             UNIQUE KEY (id, email)
         );
         """
