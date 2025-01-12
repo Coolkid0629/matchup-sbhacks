@@ -6,6 +6,7 @@ from flask_cors import CORS
 from models import create_tables, conn
 from embedding_utils import get_embedding
 import struct
+import subprocess
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -17,6 +18,18 @@ create_tables()
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create folder for profile pictures if not exists
 
+def create_user_wallet():
+    """Creates a new Solana wallet and returns the public key and secret key."""
+    try:
+        result = subprocess.run(["solana-keygen", "new", "--no-outfile"], capture_output=True, text=True)
+        lines = result.stdout.splitlines()
+        pubkey = [line.split(": ")[1] for line in lines if line.startswith("pubkey")][0]
+        seed_phrase = [line.split(": ")[1] for line in lines if line.startswith("Save this seed phrase")][0]
+        return pubkey, seed_phrase
+    except Exception as e:
+        print(f"Error creating wallet: {e}")
+        return None, None
+
 # --- API to Handle Signup ---
 @app.route('/api/signup', methods=['POST'])
 def signup():
@@ -26,6 +39,10 @@ def signup():
     password = data.get('password')
     interests = data.get('interests')
     profile_picture_data = data.get('profile_picture')  # Base64 encoded string
+
+    pubkey, seed_phrase = create_user_wallet()
+    if not pubkey:
+        return "Error creating wallet for user."
 
     with conn.cursor() as cursor:
         cursor.execute("SELECT 1 FROM user_profiles WHERE email = %s", (email,))
@@ -49,6 +66,8 @@ def signup():
     """
     with conn.cursor() as cursor:
         cursor.execute(sql, (name, email, password, vector_blob, interests, 'active', profile_picture_path))
+        #sql = "INSERT INTO user_profiles (name, email, password, interests, wallet_address) VALUES (%s, %s, %s, %s, %s, %s)"
+        cursor.execute(sql, (name, email, password, interests, pubkey))
         conn.commit()
 
     return jsonify({"message": "User registered successfully"}), 201
