@@ -1,12 +1,48 @@
-.app-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+/* Container to center the scrollable widget */
+.scrollable-container {
+  max-height: 80vh; /* Set maximum height for the scrollable area */
+  overflow-y: auto; /* Enable vertical scrolling */
+  width: 300px; /* Fixed width for the scrollable widget */
+  background-color: purple; /* Purple background for the scrollable div */
+  border-radius: 10px; /* Optional rounded corners */
+  padding: 10px; /* Padding inside the container */
+  box-sizing: border-box; /* Ensures padding doesn't expand the container */
 }
 
-.main-content {
-  flex: 1;
+/* Scrollable widget content */
+.scrollable-widget {
   display: flex;
   flex-direction: column;
-  padding-top: 100px; /* Account for navbar height (100px) + padding (32px) */
+  gap: 10px;
+}
+
+/* Button styling */
+.btn-purple {
+  background-color: purple; /* Purple background */
+  color: white; /* White text color */
+  border: none; /* Remove border */
+  text-align: center;
+}
+
+.btn-purple:hover {
+  background-color: darkviolet; /* Darker purple on hover */
+}
+
+/* Optional active button style */
+.btn-purple.active {
+  background-color: indigo; /* Active button color */
+}
+
+/* Scrollbar styling (optional) */
+.scrollable-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

@@ -1,0 +1,49 @@
+/* Container to center the scrollable widget */
+.scrollable-container {
+    max-height: 80vh; /* Set maximum height for the scrollable area */
+    overflow-y: auto; /* Enable vertical scrolling */
+    width: 300px; /* Fixed width for the scrollable widget */
+    background-color: #ffffff; /* White background */
+    border-radius: 10px; /* Optional rounded corners */
+    padding: 10px; /* Padding inside the container */
+    box-sizing: border-box; /* Ensures padding doesn't expand the container */
+    margin: 0; /* Remove any margin */
+  }
+  
+  /* Scrollable widget content */
+  .scrollable-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Button styling */
+  .btn-purple {
+    background-color: rgb(253, 2, 207); /* Purple background */
+    color: rgb(127, 59, 182); /* White text color */
+    border: none; /* Remove border */
+    text-align: center;
+  }
+  
+  .btn-purple:hover {
+    background-color: rgb(193, 72, 245); /* Darker purple on hover */
+  }
+  
+  /* Optional active button style */
+  .btn-purple.active {
+    background-color: rgb(155, 27, 246); /* Active button color */
+  }
+  
+  /* Scrollbar styling (optional) */
+  .scrollable-container::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .scrollable-container::-webkit-scrollbar-thumb {
+    background: #cccccc; /* Light gray scrollbar */
+    border-radius: 4px;
+  }
+  
+  .scrollable-container::-webkit-scrollbar-thumb:hover {
+    background: #bbbbbb; /* Slightly darker on hover */
+  }

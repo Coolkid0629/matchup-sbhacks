@@ -1,93 +1,60 @@
-import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
+import React, { useState } from 'react';
 
-function Matches() {
-  const [matches, setMatches] = useState([]);
-  
-  useEffect(() => {
-    // Get email and password from cookies
-    const email = Cookies.get("username");
-    const password = Cookies.get("userpass");
-
-    if (!email || !password) {
-      console.error("User is not logged in. Missing cookies.");
-      return;
+const TimeSelector = () => {
+  // Generate the times from 8 AM to 10 PM, spaced 15 minutes apart
+  const generateTimes = () => {
+    const times = [];
+    let currentTime = new Date();
+    currentTime.setHours(8, 0, 0, 0); // Start at 8 AM
+    while (currentTime.getHours() < 22 || (currentTime.getHours() === 22 && currentTime.getMinutes() === 0)) {
+      times.push(currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      currentTime.setMinutes(currentTime.getMinutes() + 15); // Increment by 15 minutes
     }
-
-    // Set the user status to active when the component is mounted
-    updateUserStatus("active", email, password);
-
-    // Fetch matches for the logged-in user
-    fetchMatches(email, password);
-
-    // Cleanup function to set the status to inactive when the user leaves the page (optional)
-    return () => {
-      updateUserStatus("inactive", email, password);
-    };
-  }, []);
-
-  const updateUserStatus = async (status, email, password) => {
-    const statusData = { email, password, status };
-
-    try {
-      const response = await fetch("http://127.0.0.1:5000/api/update-status", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(statusData),
-      });
-
-      if (!response.ok) {
-        console.error("Failed to update status:", await response.json());
-      }
-    } catch (error) {
-      console.error("Error updating user status:", error);
-    }
+    return times;
   };
 
-  const fetchMatches = async (email, password) => {
-    const userData = { email, password };
+  const times = generateTimes();
+  const [selectedTime, setSelectedTime] = useState('');
 
-    try {
-      const response = await fetch("http://127.0.0.1:5000/api/matches", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
+  // Function to handle time button click and send API request
+  const handleClick = (time) => {
+    setSelectedTime(time);
+
+    // Send API request with the selected time
+    fetch('http://yourserver.com/api', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ time }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('API Response:', data);
+      })
+      .catch((error) => {
+        console.error('Error sending API request:', error);
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setMatches(data);
-      } else {
-        console.error("Failed to fetch matches:", await response.json());
-      }
-    } catch (error) {
-      console.error("Error fetching matches:", error);
-    }
   };
 
   return (
-    <div className="matches-container">
-      <h2>Your Matches</h2>
-      {matches.length > 0 ? (
-        <div className="match-list">
-          {matches.map((match, index) => (
-            <div key={index} className="match-card">
-              <h3>{match.match_name}</h3>
-              <p><strong>Common Interests:</strong> {match.common_interests.join(", ")}</p>
-              <p><strong>Similarity Score:</strong> {match.similarity}</p>
-              <p><strong>Lunch Time:</strong> {match.lunch_time}</p>
-            </div>
+    <div className="d-flex justify-content-center align-items-center vh-100" style={{ margin: '0' }}> 
+      <div className="scrollable-container">
+        <div className="scrollable-widget" style={{ overflowY: 'scroll', backgroundColor: '#fff' }}>
+          {times.map((time, index) => (
+            <button
+              key={index}
+              className={`btn btn-purple text-white w-100 mb-2 ${selectedTime === time ? 'active' : ''}`}
+              onClick={() => handleClick(time)}
+              style={{ backgroundColor: '#9C54A6' }}
+            >
+              {time}
+            </button>
           ))}
         </div>
-      ) : (
-        <p>No matches found. Please check back later!</p>
-      )}
+      </div>
     </div>
   );
-}
+};
 
-export default Matches;
+export default TimeSelector;
