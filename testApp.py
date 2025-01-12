@@ -82,7 +82,7 @@ def get_user_data():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-
+    # i love sql :0
     with conn.cursor() as cursor:
         cursor.execute("SELECT id, name, email, interests, lunch_time, profile_picture FROM user_profiles WHERE email = %s AND password = %s", (email, password))
         user = cursor.fetchone()
