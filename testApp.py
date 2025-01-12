@@ -115,49 +115,38 @@ def login():
     }
     return jsonify(user_data), 200
 
-@app.route('/api/user-data', methods=['POST'])
+@app.route('/api/user_data', methods=['POST'])
 def get_user_data():
-    try:
-        data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
 
-        # Check if email and password are provided
-        if not email or not password:
-            return jsonify({"message": "Email and password are required"}), 400
-        conn = create_connection()
-        # Check if the connection is still open and reconnect if necessary
-        if not conn.open:
-            conn.ping(reconnect=True)
-        print("connection made")
+    conn = create_connection()
+    with conn.cursor() as cursor:
+        # Fetch the user's profile data, including bio
+        cursor.execute("""
+            SELECT id, name, email, interests, lunch_time, location, bio, profile_picture
+            FROM user_profiles
+            WHERE email = %s AND password = %s
+        """, (email, password))
+        user = cursor.fetchone()
 
-        # Query the database for the user
-        with conn.cursor() as cursor:
-            cursor.execute("""
-                SELECT name, email, interests, lunch_time, profile_picture, status
-                FROM user_profiles WHERE email = %s AND password = %s
-            """, (email, password))
-            user = cursor.fetchone()
-        print("user fetched")
+    if not user:
+        return jsonify({"error": "Invalid email or password"}), 404
 
-        if not user:
-            return jsonify({"message": "Invalid email or password."}), 401
+    user_data = {
+        "id": user[0],
+        "name": user[1],
+        "email": user[2],
+        "interests": user[3],
+        "lunch_time": user[4],
+        "location": user[5],
+        "bio": user[6],  # Include bio in the response
+        "profile_picture": user[7] if user[7] else None  # Add profile picture if it exists
+    }
 
-        # Build the user data response
-        user_data = {
-            "name": user[0],
-            "email": user[1],
-            "interests": user[2],
-            "lunch_time": user[3] or "Not Set",
-            "profile_picture": user[4] or "No profile picture",
-            "status": user[5] or "active"  # Default to "active" if not set
-        }
+    return jsonify(user_data), 200
 
-        return jsonify(user_data), 200
-
-    except Exception as e:
-        print(f"Error fetching user data: {e}")
-        return jsonify({"message": "An error occurred."}), 500
     
 @app.route('/api/user-count', methods=['POST'])
 def user_count():
@@ -208,38 +197,52 @@ def get_matches():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
+
     conn = create_connection()
     with conn.cursor() as cursor:
-        cursor.execute("SELECT id, name, interests, vector, lunch_time FROM user_profiles WHERE email = %s AND password = %s", (email, password))
+        # Fetch the current user's profile
+        cursor.execute("SELECT id, name, interests, vector, lunch_time, location, bio FROM user_profiles WHERE email = %s AND password = %s", (email, password))
         current_user = cursor.fetchone()
 
     if not current_user:
         return jsonify({"error": "Invalid email or password"}), 404
 
     current_user_vector = np.frombuffer(current_user[3], dtype=np.float32)
+    current_user_location = current_user[5]  # Location of the current user
+
     conn = create_connection()
     with conn.cursor() as cursor:
-        cursor.execute("SELECT id, name, interests, vector, lunch_time FROM user_profiles")
+        # Fetch all users from the database
+        cursor.execute("SELECT id, name, email, interests, vector, lunch_time, location, bio FROM user_profiles")
         users = cursor.fetchall()
 
     user_data = []
     for u in users:
-        vector = np.frombuffer(u[3], dtype=np.float32)
+        vector = np.frombuffer(u[4], dtype=np.float32)
         user_data.append({
             "id": u[0],
             "name": u[1],
-            "interests": u[2].lower().split(", "),
+            "email": u[2],
+            "interests": u[3].lower().split(", "),
             "vector": vector,
-            "lunch_time": u[4]
+            "lunch_time": u[5],
+            "location": u[6],
+            "bio": u[7]
         })
 
     matches = []
+    most_similar_user = None
+    highest_similarity = 0.0
+
     for other_user in user_data:
         if current_user[0] == other_user["id"]:
-            continue
+            continue  # Skip the current user
 
         if current_user[4] != other_user["lunch_time"]:
-            continue
+            continue  # Skip users with different lunch times
+
+        if current_user_location != other_user["location"]:
+            continue  # Skip users with different locations
 
         current_interests = set(current_user[2].lower().split(", "))
         other_interests = set(other_user["interests"])
@@ -250,18 +253,42 @@ def get_matches():
             np.linalg.norm(current_user_vector) * np.linalg.norm(other_user["vector"])
         )
 
-        # Convert similarity to float for JSON serialization
-        similarity = float(similarity)
+        similarity = float(similarity)  # Convert similarity to float for JSON serialization
 
         if common_interests:
             matches.append({
                 "match_name": other_user["name"],
+                "email": other_user["email"],
+                "bio": other_user["bio"],
                 "common_interests": common_interests,
                 "similarity": round(similarity, 2),
-                "lunch_time": current_user[4]
+                "lunch_time": current_user[4],
+                "location": current_user_location
             })
 
-    return jsonify(matches), 200
+            # Track the most similar user
+            if similarity > highest_similarity:
+                highest_similarity = similarity
+                most_similar_user = {
+                    "id": other_user["id"],
+                    "name": other_user["name"],
+                    "email": other_user["email"],
+                    "similarity": round(similarity, 2)
+                }
+
+    # Update the most similar user in the database
+    if most_similar_user:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                UPDATE user_profiles
+                SET most_similar_matches = %s
+                WHERE email = %s
+            """, (json.dumps(most_similar_user), email))
+            conn.commit()
+
+    return jsonify({"matches": matches, "most_similar_user": most_similar_user}), 200
+
+
 
 
 
