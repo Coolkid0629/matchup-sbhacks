@@ -112,7 +112,7 @@ def login():
     return jsonify(user_data), 200
 
 # --- API to Fetch User Data ---
-#on principle this should not be a POST routine but i think we are kinda stuck with it ATP 
+#on principle this should not be a POST route but i think we are kinda stuck with it ATP 
 @app.route('/api/user-data', methods=['POST'])
 def get_user_data():
     data = request.get_json()
