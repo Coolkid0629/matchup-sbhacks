@@ -3,8 +3,10 @@ import "./Profile.css"
 
 const ProfilePage = () => {
   const [profileImage, setProfileImage] = useState(null);
+  const [profileDescription, setProfileDescription] = useState(null)
   const [error, setError] = useState(null);
   const imageEndpoint = 'https://randomuser.me/api/'; 
+  const descriptionEndpoint = 'http://localhost:5000/dashboard';
   useEffect(() => {
     // Fetch the profile image when the component loads
     const fetchProfileImage = async () => {
@@ -20,6 +22,15 @@ const ProfilePage = () => {
         setError('Failed to load profile image.');
         console.error(err);
       }
+      /*
+      try {
+        const response = await fetch(descriptionEndpoint)
+      }
+      catch (err) {
+        setError('failed to get desc');
+        console.error(err)
+      }
+      */
     };
 
     fetchProfileImage();
