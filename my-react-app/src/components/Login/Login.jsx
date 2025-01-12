@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
+import { Navigate, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie"; 
+
 import "./Login.css";
 
 function Login() {
   // State to store username and password
   const [email, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loginFailed, setLoginFailed] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   // Handle the form submission
   const handleSubmit = async (event) => {
@@ -16,6 +23,7 @@ function Login() {
       email: email,
       password: password,
     };
+    console.log(loginData);
 
     try {
       // Make the POST request to the server
@@ -30,20 +38,30 @@ function Login() {
       // Handle the response from the server
       if (response.ok) {
         const data = await response.json();
-        console.log("Login successful:", data);
+        Cookies.set("username", data.email);
+        Cookies.set("userpass", data.password);
+        navigate("/profile");
         // You can redirect or update the UI based on the response here
       } else {
-        console.error("Login failed:", response.status);
-        // Handle failed login attempt (e.g., show an error message)
+        const errorData = await response.json();
+        console.log(errorData);
+        setError(errorData.message || "Login failed. Please try again.");
+        setLoginFailed(true);
       }
     } catch (error) {
       console.error("Error during login request:", error);
-      // Handle the error (e.g., show an error message)
+      setError("Network error. Please try again later.");
+      setLoginFailed(true);
     }
   };
 
   return (
     <div className="login-container">
+      {loginFailed && (
+        <Alert variant="danger" className="mb-3" onClose={() => setLoginFailed(false)} dismissible>
+          {error}
+        </Alert>
+      )}
       <Form className="login-form" onSubmit={handleSubmit}>
         <h2 className="login-title">Welcome Back</h2>
         <p className="login-subtitle">Please login to your account</p>
