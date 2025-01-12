@@ -10,15 +10,16 @@ import struct
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React frontend
-
 # --- Create Tables ---
 create_tables()
-
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create folder for profile pictures if not exists
 
 # --- API to Handle Signup ---
 @app.route('/api/signup', methods=['POST'])
+
+
+
 def signup():
     data = request.get_json()
     name = data.get('name')
@@ -36,12 +37,8 @@ def signup():
     vector_blob = struct.pack(f'{len(vector)}f', *vector)
 
     # Save profile picture if provided
-    profile_picture_path = None
-    if profile_picture_data:
-        picture_filename = f"{email}_profile.png"
-        profile_picture_path = os.path.join(UPLOAD_FOLDER, picture_filename)
-        with open(profile_picture_path, "wb") as f:
-            f.write(base64.b64decode(profile_picture_data))
+    profile_picture_path = profile_picture_data
+ 
 
     sql = """
     INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, status, profile_picture)
@@ -99,7 +96,7 @@ def get_user_data():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-    # i love sql :0
+    # i ove sql :0
     with conn.cursor() as cursor:
         cursor.execute("SELECT id, name, email, interests, lunch_time, profile_picture FROM user_profiles WHERE email = %s AND password = %s", (email, password))
         user = cursor.fetchone()
