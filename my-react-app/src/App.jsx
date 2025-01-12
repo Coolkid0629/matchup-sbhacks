@@ -7,6 +7,7 @@ import About from './components/About/About.jsx'
 import NavbarComponent from './components/Navbar/NavbarComponent.jsx';
 import FooterComponent from './components/Footer/FooterComponent.jsx';
 import Landing from './components/Landing/landing.jsx';
+import ProfilePage from './components/Profile/Profile.jsx';
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About />} />
-          </Routes>
+              <Route path="/profile" element={<ProfilePage/>} />
+      </Routes>
         </main>
         <FooterComponent/>
       </div>

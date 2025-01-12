@@ -1,0 +1,25 @@
+.profile-container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .profile-header {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .profile-image {
+    max-width: 200px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .profile-loading {
+    color: #555;
+    font-style: italic;
+  }
+  
+  .profile-error {
+    color: red;
+    font-weight: bold;
+  }
