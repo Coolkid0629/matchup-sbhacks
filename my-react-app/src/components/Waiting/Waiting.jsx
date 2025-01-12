@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Waiting.css';
 
 const Waiting = () => {
+
   return (
     <div className="waiting-container">
       <div className="waiting-content">
-        <h1>Waiting...</h1>
-        <p>Please wait while we find your pair!</p>
+          <div>
+            <h1>Your Matches:</h1>
+            
+          </div>
       </div>
     </div>
   );
