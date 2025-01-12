@@ -25,7 +25,6 @@ export default function PersonalProfile() {
       try {
         const response = await fetch("http://127.0.0.1:5000/api/user-data", {
           method: "POST",
-          mode: "no-cors",
           headers: {
             "Content-Type": "application/json",
           },

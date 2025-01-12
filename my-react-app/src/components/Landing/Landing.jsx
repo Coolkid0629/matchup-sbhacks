@@ -46,7 +46,7 @@ const Landing = () => {
         <p>Connect, Eat, and Collaborate at UCSB's Premier Campus</p>
         <div className="cta-buttons">
           <a className="primary-btn auth-btn" href="/signup">Join Now</a>
-          <a className="secondary-btn" href="/about"> Learn More</a>
+          <a className="secondary-btn btn-a" href="/about"> Learn More</a>
         </div>
       </div>
       <div className="landing-features">
