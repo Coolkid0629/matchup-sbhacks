@@ -25,9 +25,9 @@ def create_tables():
             password VARCHAR(200) NOT NULL,
             vector BLOB,
             interests TEXT,
-            lunch_time VARCHAR(50),
+            lunch_time VARCHAR(50) NULL,
             status VARCHAR(20) DEFAULT 'active',
-            profile_picture VARCHAR(255),  -- Column to store the profile picture path
+            profile_picture VARCHAR(255) NULL,  -- Column to store the profile picture path
             UNIQUE KEY (id, email)
         );
         """

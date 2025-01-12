@@ -3,9 +3,11 @@ import json
 import base64
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
+import requests
 from models import create_tables, conn
 from embedding_utils import get_embedding
 import struct
+import subprocess
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -15,57 +17,79 @@ create_tables()
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create folder for profile pictures if not exists
 
-# --- API to Handle Signup ---
+def create_user_wallet():
+    """Creates a new Solana wallet and returns the public key and secret key."""
+    try:
+        result = subprocess.run(["solana-keygen", "new", "--no-outfile"], capture_output=True, text=True)
+        lines = result.stdout.splitlines()
+        pubkey = [line.split(": ")[1] for line in lines if line.startswith("pubkey")][0]
+        seed_phrase = [line.split(": ")[1] for line in lines if line.startswith("Save this seed phrase")][0]
+        return pubkey, seed_phrase
+    except Exception as e:
+        print(f"Error creating wallet: {e}")
+        return None, None
+    
+@app.route('/ping', methods=['GET'])
+def ping():
+    return jsonify({"message": "pong"}), 200
+
+
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the uploads folder exists
+
 @app.route('/api/signup', methods=['POST'])
 
 
 
 def signup():
-    data = request.get_json()
-    name = data.get('name')
-    email = data.get('email')
-    password = data.get('password')
-    interests = data.get('interests')
-    profile_picture_data = data.get('profile_picture')  # Base64 encoded string
+    try:
+        # Get the JSON data from the request
+        data = request.get_json()
+        name = data.get('name')
+        email = data.get('email')
+        password = data.get('password')
+        interests = data.get('interests')
+        lunch_time = data.get('lunch_time', None)  # Default to None if not provided
+        profile_picture_data = data.get('profile_picture')  # Base64 encoded string
 
-    with conn.cursor() as cursor:
-        cursor.execute("SELECT 1 FROM user_profiles WHERE email = %s", (email,))
-        if cursor.fetchone():
-            return jsonify({"error": "Email already exists"}), 400
+        if not all([name, email, password, interests]):
+            return jsonify({"error": "All fields except lunch time and profile picture are required!"}), 400
 
-    vector = get_embedding(interests)
-    vector_blob = struct.pack(f'{len(vector)}f', *vector)
+        # Ensure the database connection is open
+        if not conn.open:
+            conn.ping(reconnect=True)
 
-    # Save profile picture if provided
-    profile_picture_path = profile_picture_data
- 
+        vector = get_embedding(interests)
+        vector_blob = struct.pack(f'{len(vector)}f', *vector)
 
-    sql = """
-    INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, status, profile_picture)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-    """
-    with conn.cursor() as cursor:
-        cursor.execute(sql, (name, email, password, vector_blob, interests, 'active', profile_picture_path))
-        conn.commit()
+        # Save profile picture if provided
+        profile_picture_path = None
+        if profile_picture_data:
+            picture_filename = f"{email.replace('@', '_at_')}.png"
+            profile_picture_path = os.path.join(UPLOAD_FOLDER, picture_filename)
+            with open(profile_picture_path, "wb") as f:
+                f.write(base64.b64decode(profile_picture_data))
+            print(f"Profile picture saved at: {profile_picture_path}")
 
-    return jsonify({"message": "User registered successfully"}), 201
+        # Execute database queries
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT 1 FROM user_profiles WHERE email = %s", (email,))
+            if cursor.fetchone():
+                return jsonify({"error": "Email already exists"}), 400
 
-@app.route('/api/lunchTime', methods=['POST'])
-def lunchTime():
-    data = request.get_json()
-    lunch_time = data.get('lunch_time')
-    email = data.get('email')
-    password = data.get('password')
+            cursor.execute("""
+                INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, profile_picture)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (name, email, password, vector_blob, interests, lunch_time, profile_picture_path))
+            conn.commit()
 
-    with conn.cursor() as cursor:
-        cursor.execute("SELECT lunch_time WHERE email = %s AND password = %s", (email, password))
-        user = cursor.fetchone()
+        return jsonify({"message": "Signup successful!"}), 200
 
-    user_data = {
-        "lunch_time": user[0]
-    }
+    except Exception as e:
+        print(f"Error during signup: {e}")
+        return jsonify({"error": "Signup failed due to an error."}), 500
 
-    return jsonify(user_data), 200
+
 
 # --- API to Handle Login ---
 @app.route('/api/login', methods=['POST'])
@@ -90,7 +114,6 @@ def login():
     return jsonify(user_data), 200
 
 # --- API to Fetch User Data ---
-#on principle this should not be a POST route but i think we are kinda stuck with it ATP 
 @app.route('/api/user-data', methods=['POST'])
 def get_user_data():
     data = request.get_json()
@@ -144,7 +167,17 @@ def get_profile_picture():
 
     return send_file(profile_picture_path[0], mimetype='image/png')
 
+def deposit_to_user_wallet(user_wallet_address):
+    """Send a request to the Solana middleware to deposit 1 SOL."""
+    solana_middleware_url = "http://localhost:3000/mint-token"
+    payload = {"userPublicKey": user_wallet_address}
 
+    try:
+        response = requests.post(solana_middleware_url, json=payload)
+        return response.status_code == 201
+    except Exception as e:
+        print(f"Error communicating with Solana middleware: {e}")
+        return False
 
 # --- API to Fetch Matches ---
 @app.route('/api/matches', methods=['POST'])
@@ -191,6 +224,9 @@ def get_matches():
                 "similarity": round(similarity, 2),
                 "lunch_time": current_user[4]
             })
+
+    if deposit_to_user_wallet(other_user["wallet_address"]):
+        print(f"Deposited 1 SOL to {other_user['wallet_address']}")
 
     return jsonify(matches), 200
 
