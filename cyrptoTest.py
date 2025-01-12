@@ -1,6 +1,7 @@
 import os
 import json
 import base64
+from socket import create_connection
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import requests
@@ -220,10 +221,15 @@ def deposit_to_user_wallet(user_wallet_address):
     except Exception as e:
         print(f"Error communicating with Solana middleware: {e}")
         return False
-
+    
 import numpy as np
 
-import numpy as np
+def pad_vector(vector, length=768):
+    if len(vector) < length:
+        padded_vector = np.pad(vector, (0, length - len(vector)), mode='constant')
+        return padded_vector
+    return vector
+
 
 @app.route('/api/matches', methods=['POST'])
 def get_matches():
@@ -231,10 +237,16 @@ def get_matches():
     email = data.get('email')
     password = data.get('password')
 
-    # Fetch the current user
+    # Validate input
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+
+    conn = create_connection()
+
+    # Fetch current user details by email and password
     with conn.cursor() as cursor:
         cursor.execute("""
-            SELECT id, name, interests, vector, lunch_time, bio, wallet_public_key 
+            SELECT email, name, interests, vector, lunch_time, bio 
             FROM user_profiles WHERE email = %s AND password = %s
         """, (email, password))
         current_user = cursor.fetchone()
@@ -242,45 +254,41 @@ def get_matches():
     if not current_user:
         return jsonify({"error": "Invalid email or password"}), 404
 
-    current_user_id, current_name, current_interests, current_vector_blob, current_lunch_time, current_bio, current_wallet_public_key = current_user
+    # Unpack current user data
+    current_email, current_name, current_interests, current_vector_blob, current_lunch_time, current_bio = current_user
     current_user_vector = np.frombuffer(current_vector_blob, dtype=np.float32)
-    current_user_bio = current_bio or ""  # Handle missing bio
+    current_user_bio_vector = pad_vector(get_embedding(current_bio or ""), 768)  # Ensure 768 dimensions for bio embedding
 
-    # Generate bio embedding
-    current_user_bio_vector = get_embedding(current_user_bio)
-
-    # Fetch all other users
+    # Fetch all other users from the database
     with conn.cursor() as cursor:
         cursor.execute("""
-            SELECT id, name, interests, vector, lunch_time, bio, wallet_public_key 
+            SELECT email, name, interests, vector, lunch_time, bio 
             FROM user_profiles
         """)
         users = cursor.fetchall()
 
     user_data = []
-    for user in users:
-        other_user_id, other_name, other_interests, other_vector_blob, other_lunch_time, other_bio, other_wallet_public_key = user
-        if current_user_id == other_user_id:
+    for other_email, other_name, other_interests, other_vector_blob, other_lunch_time, other_bio in users:
+        if current_email == other_email:
             continue  # Skip matching the user with themselves
 
-        # Handle vector and bio embedding
+        # Convert the vector blob and bio embedding
         other_user_vector = np.frombuffer(other_vector_blob, dtype=np.float32)
-        other_user_bio_vector = get_embedding(other_bio or "")
+        other_user_bio_vector = pad_vector(get_embedding(other_bio or ""), 768)  # Pad bio embedding if needed
 
         user_data.append({
-            "id": other_user_id,
+            "email": other_email,
             "name": other_name,
             "interests": other_interests.lower().split(", "),
             "vector": other_user_vector,
             "lunch_time": other_lunch_time,
-            "bio_vector": other_user_bio_vector,
-            "wallet_public_key": other_wallet_public_key
+            "bio_vector": other_user_bio_vector
         })
 
     matches = []
     for other_user in user_data:
         if current_lunch_time != other_user["lunch_time"]:
-            continue  # Skip if lunch times do not match
+            continue  # Skip users with different lunch times
 
         # Calculate common interests
         current_interest_set = set(current_interests.lower().split(", "))
@@ -313,15 +321,16 @@ def get_matches():
                 "lunch_time": current_lunch_time
             })
 
-            # Mint token for each match (placeholder function)
-            if other_user["wallet_public_key"]:
-                print(f"Minting token to {other_user['wallet_public_key']}")
-                # mint_token(other_user["wallet_public_key"])  # Uncomment to mint
-
     if not matches:
         return jsonify({"message": "No matches found."}), 200
 
     return jsonify(matches), 200
+
+
+
+
+
+
 
 
 
