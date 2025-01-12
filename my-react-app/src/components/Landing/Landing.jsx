@@ -9,13 +9,25 @@ const Landing = () => {
     // Fetch the number of active users and total users from the Flask backend
     const fetchUserCount = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/api/user-count");
+        const response = await fetch("http://127.0.0.1:5000/api/user-count", {
+          method: "POST", // Match backend expectation
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({}) // Provide an empty body as required by the backend
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
-        
+
         // Handle data format properly
-        if (data.total_users !== undefined && data.active_users !== undefined) {
-          setActiveUsers(data.active_users);
-          setTotalUsers(data.total_users);
+        if (data.user_count !== undefined) {
+          setTotalUsers(data.user_count);
+          // Assuming all users are active for now (modify this logic if the backend differentiates active vs total users)
+          setActiveUsers(data.user_count); 
         } else {
           console.error('Data format error:', data);
         }
@@ -34,7 +46,7 @@ const Landing = () => {
         <p>Connect, Eat, and Collaborate at UCSB's Premier Campus</p>
         <div className="cta-buttons">
           <a className="primary-btn auth-btn" href="/signup">Join Now</a>
-          <a className="secondary-btn" href="/about"> Learn More</a>
+          <a className="secondary-btn btn-a" href="/about"> Learn More</a>
         </div>
       </div>
       <div className="landing-features">
@@ -47,7 +59,7 @@ const Landing = () => {
           <p>Total Registered Users</p>
         </div>
         <div className="feature-card">
-          <h3>{activeUsers !== null && totalUsers !== null ? (activeUsers / totalUsers * 100).toFixed(2) : 'Loading...'}</h3>
+          <h3>{(activeUsers !== null && totalUsers !== null && totalUsers !== 0) ? ((activeUsers / totalUsers) * 100).toFixed(2) : 'Loading...'}</h3>
           <p>Active Users (%)</p>
         </div>
       </div>
