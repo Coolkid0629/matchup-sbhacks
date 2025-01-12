@@ -115,40 +115,55 @@ def login():
 # --- API to Fetch User Data ---
 @app.route('/api/user-data', methods=['POST'])
 def get_user_data():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
 
-    with conn.cursor() as cursor:
-        cursor.execute("SELECT id, name, email, interests, lunch_time, profile_picture FROM user_profiles WHERE email = %s AND password = %s", (email, password))
-        user = cursor.fetchone()
+        # Check if email and password are provided
+        if not email or not password:
+            return jsonify({"message": "Email and password are required"}), 400
 
-    if not user:
-        return jsonify({"error": "Invalid email or password"}), 404
+        # Query the database for the user
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT name, email, interests, lunch_time, profile_picture, status 
+                FROM user_profiles WHERE email = %s AND password = %s
+            """, (email, password))
+            user = cursor.fetchone()
 
-    user_data = {
-        "id": user[0],
-        "name": user[1],
-        "email": user[2],
-        "interests": user[3],
-        "lunch_time": user[4],
-        "profile_picture": f"/api/profile-picture?email={email}" if user[5] else None
-    }
-    return jsonify(user_data), 200
+        if not user:
+            return jsonify({"message": "Invalid email or password."}), 401
 
-@app.route('/api/user-count', methods=['GET'])
-def get_user_count():
-    """Return the total number of users and active users in the database."""
-    with conn.cursor() as cursor:
-        # Count total users
-        cursor.execute("SELECT COUNT(*) FROM user_profiles")
-        total_users = cursor.fetchone()[0]
+        # Build the user data response
+        user_data = {
+            "name": user[0],
+            "email": user[1],
+            "interests": user[2],
+            "lunch_time": user[3] or "Not Set",
+            "profile_picture": user[4] or "No profile picture",
+            "status": user[5] or "active"  # Default to "active" if not set
+        }
 
-        # Count active users
-        cursor.execute("SELECT COUNT(*) FROM user_profiles WHERE status = 'active'")
-        active_users = cursor.fetchone()[0]
+        return jsonify(user_data), 200
 
-    return jsonify({"total_users": total_users, "active_users": active_users}), 200
+    except Exception as e:
+        print(f"Error fetching user data: {e}")
+        return jsonify({"message": "An error occurred."}), 500
+
+
+@app.route('/api/user-count', methods=['POST'])
+def user_count():
+    """Return the total count of users."""
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) FROM user_profiles")
+            count = cursor.fetchone()[0]
+        return jsonify({"user_count": count}), 200
+    except Exception as e:
+        print(f"Error fetching user count: {e}")
+        return jsonify({"error": "Failed to fetch user count."}), 500
+
 
 # --- API to Fetch Profile Picture ---
 @app.route('/api/profile-picture', methods=['GET'])
