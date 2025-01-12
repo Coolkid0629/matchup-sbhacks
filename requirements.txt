@@ -3,3 +3,4 @@ Flask_Cors==5.0.0
 numpy==2.2.1
 sentence_transformers==3.3.1
 singlestoredb==1.11.0
+gunicorn
