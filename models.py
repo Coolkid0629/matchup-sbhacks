@@ -27,6 +27,7 @@ def create_tables():
             interests TEXT,
             lunch_time VARCHAR(50),
             status VARCHAR(20) DEFAULT 'active',
+            profile_picture VARCHAR(255),  -- Column to store the profile picture path
             UNIQUE KEY (id, email)
         );
         """
