@@ -4,13 +4,15 @@
         "email": "user1@gmail.com",
         "password": "1",
         "interests": "red, green. blue",
-        "lunch_time": "12:00 PM"
+        "lunch_time": "12:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/73.jpg"
     },
     {
         "name": "user2",
         "email": "user2@gmail.com",
         "password": "1",
         "interests": "red",
-        "lunch_time": "12:00 PM"
+        "lunch_time": "12:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/73.jpg"
     }
 ]
