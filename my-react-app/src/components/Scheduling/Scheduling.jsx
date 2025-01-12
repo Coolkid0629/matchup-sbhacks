@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import './Scheduling.css'; 
 import Cookies from "js-cookie";
+import './Scheduling.css'; // Import the styling
 
 const TimeSelector = () => {
   const generateTimes = () => {
