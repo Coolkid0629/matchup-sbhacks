@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import './Scheduling.css'; 
 import Cookies from "js-cookie";
+import { useNavigate } from 'react-router-dom';
 
 const TimeSelector = () => {
   const generateTimes = () => {
@@ -21,9 +22,11 @@ const TimeSelector = () => {
 
   const email = Cookies.get("username");
   const password = Cookies.get("userpass");
+  const navigate = useNavigate();
 
   if (!email || !password) {
       console.error("User is not logged in. Missing cookies.");
+      navigate("/login");
       return;
   }
 
