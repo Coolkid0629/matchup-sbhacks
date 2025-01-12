@@ -112,7 +112,6 @@ def login():
     }
     return jsonify(user_data), 200
 
-# --- API to Fetch User Data ---
 @app.route('/api/user-data', methods=['POST'])
 def get_user_data():
     try:
@@ -124,10 +123,14 @@ def get_user_data():
         if not email or not password:
             return jsonify({"message": "Email and password are required"}), 400
 
+        # Check if the connection is still open and reconnect if necessary
+        if not conn.open:
+            conn.ping(reconnect=True)
+
         # Query the database for the user
         with conn.cursor() as cursor:
             cursor.execute("""
-                SELECT name, email, interests, lunch_time, profile_picture, status 
+                SELECT name, email, interests, lunch_time, profile_picture, status
                 FROM user_profiles WHERE email = %s AND password = %s
             """, (email, password))
             user = cursor.fetchone()
@@ -137,12 +140,12 @@ def get_user_data():
 
         # Build the user data response
         user_data = {
-            "name": user[0],
-            "email": user[1],
-            "interests": user[2],
-            "lunch_time": user[3] or "Not Set",
-            "profile_picture": user[4] or "No profile picture",
-            "status": user[5] or "active"  # Default to "active" if not set
+            "name": user['name'],
+            "email": user['email'],
+            "interests": user['interests'],
+            "lunch_time": user['lunch_time'] or "Not Set",
+            "profile_picture": user['profile_picture'] or "No profile picture",
+            "status": user['status'] or "active"  # Default to "active" if not set
         }
 
         return jsonify(user_data), 200
@@ -150,8 +153,7 @@ def get_user_data():
     except Exception as e:
         print(f"Error fetching user data: {e}")
         return jsonify({"message": "An error occurred."}), 500
-
-
+    
 @app.route('/api/user-count', methods=['POST'])
 def user_count():
     """Return the total count of users."""
