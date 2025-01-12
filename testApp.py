@@ -1,5 +1,5 @@
 import json
-from flask import Flask, request, session, redirect, url_for, render_template_string, jsonify
+from flask import Flask, request, send_from_directory, session, redirect, url_for, render_template_string, jsonify
 from models import create_tables, conn
 from embedding_utils import get_embedding
 import struct
@@ -13,6 +13,11 @@ SAMPLE_USERS_FILE = "sample_users.json"
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Secret key for session management
+
+UPLOAD_FOLDER = "uploads"  # Directory for profile pictures
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create the uploads directory if it doesn't exist
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # Create database tables
 create_tables()
@@ -72,6 +77,7 @@ def parse_lunch_time(lunch_time_str):
     return rounded_time.strftime("%I:%M %p")
 
 
+
 # --- Signup Route ---
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -81,50 +87,48 @@ def signup():
         password = request.form['password']
         interests = request.form['interests']
         lunch_time = request.form['lunch_time']
+        profile_picture = request.files.get('profile_picture')
 
-        if not is_email_unique(email):
-            return f"Email {email} already exists. Please use a different email."
+        # Save the profile picture if uploaded
+        profile_picture_path = None
+        if profile_picture:
+            picture_filename = f"{email}_{profile_picture.filename}"
+            profile_picture.save(os.path.join(app.config["UPLOAD_FOLDER"], picture_filename))
+            profile_picture_path = os.path.join(app.config["UPLOAD_FOLDER"], picture_filename)
 
-        # Convert lunch time and interests
-        formatted_lunch_time = parse_lunch_time(lunch_time)
+        # Convert interests to vector
         vector = get_embedding(interests)
         vector_blob = struct.pack(f'{len(vector)}f', *vector)
 
-        # Add user to the database
+        # Insert the new user into the database
         with conn.cursor() as cursor:
-            sql = "INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, status) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-            cursor.execute(sql, (name, email, password, vector_blob, interests, formatted_lunch_time, 'active'))
+            sql = """
+            INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, status, profile_picture)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(sql, (name, email, password, vector_blob, interests, lunch_time, 'active', profile_picture_path))
             conn.commit()
-
-        # Save to sample_users.json
-        sample_users = load_sample_users()
-        new_user = {
-            "name": name,
-            "email": email,
-            "password": password,
-            "interests": interests,
-            "lunch_time": formatted_lunch_time
-        }
-        sample_users.append(new_user)
-        save_sample_users(sample_users)
-
-        lunch_time = request.form['lunch_time']
-        if not lunch_time:
-            return "Lunch time is required! <a href='/signup'>Try Again</a>"
 
         return redirect(url_for('login'))
 
     return '''
     <h1>Signup</h1>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         Name: <input type="text" name="name" required><br>
         Email: <input type="email" name="email" required><br>
         Password: <input type="password" name="password" required><br>
         Interests (comma-separated): <input type="text" name="interests" required><br>
         Lunch Time: <input type="text" name="lunch_time" required><br>
+        Profile Picture: <input type="file" name="profile_picture"><br>
         <button type="submit">Sign Up</button>
     </form>
     '''
+
+# --- Route to Serve Profile Pictures ---
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
 
 # --- Login Route ---
 @app.route('/login', methods=['GET', 'POST'])
@@ -161,8 +165,18 @@ def dashboard():
         return redirect(url_for('login'))
 
     user_name = session['name']
+    user_id = session['user_id']
+
+    # Fetch profile picture path from the database
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT profile_picture FROM user_profiles WHERE id = %s", (user_id,))
+        profile_picture = cursor.fetchone()[0]
+
+    profile_picture_url = f"/uploads/{os.path.basename(profile_picture)}" if profile_picture else "No picture uploaded."
+
     return f'''
     <h1>Welcome, {user_name}!</h1>
+    <img src="{profile_picture_url}" alt="Profile Picture" width="200"><br>
     <p><a href="/matches">View your lunch matches</a></p>
     <p><a href="/logout">Logout</a></p>
     '''
