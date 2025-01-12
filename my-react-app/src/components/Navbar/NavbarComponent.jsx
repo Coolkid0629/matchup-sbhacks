@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import './Navbar.css'; // Import the CSS styles
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
+  const navigate = useNavigate();
+  
 
   useEffect(() => {
     const username = Cookies.get('username');
@@ -17,6 +20,7 @@ const Navbar = () => {
     Cookies.remove('userpass');
     setIsLoggedIn(false);
     setUsername('');
+    navigate('/');
   }
   return (
     <nav className="navbar">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import '../Login/Login.css';
+import './About.css';
 
 function About() {
   return (

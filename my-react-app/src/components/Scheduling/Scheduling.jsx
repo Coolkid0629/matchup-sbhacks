@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import './Scheduling.css';
 
+
 const TimeSelector = () => {
   const generateTimes = () => {
     const times = [];
@@ -22,23 +23,33 @@ const TimeSelector = () => {
 
   const email = Cookies.get("username");
   const password = Cookies.get("userpass");
+  const navigate = useNavigate();
 
   if (!email || !password) {
       console.error("User is not logged in. Missing cookies.");
+      navigate("/login");
       return;
   }
 
-  const navigate = useNavigate();
-
   const handleClick = (time) => {
     setSelectedTime(time);
+    console.log({email, password, time});
+    const request = {
+      email: email,
+      password: password,
+      time: "" + time,
+    }
+
+    const lunch_time = time
+
+
 
     fetch('http://127.0.0.1:5000/api/update-lunch-time', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, time }),
+      body: JSON.stringify({email, password, lunch_time}),
     })
     .then(() => {
       navigate('/waiting');
