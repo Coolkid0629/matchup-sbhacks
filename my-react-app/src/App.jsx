@@ -8,7 +8,8 @@ import About from './components/About/About.jsx'
 import NavbarComponent from './components/Navbar/NavbarComponent.jsx';
 import FooterComponent from './components/Footer/FooterComponent.jsx';
 import Landing from './components/Landing/landing.jsx';
-import ProfilePage from './components/Profile/Profile.jsx';
+import Scheduling from './components/Scheduling/Scheduling.jsx';
+//import ProfilePage from './components/Profile/Profile.jsx';
 import PersonalProfile from './components/Profile/ProfileCard.jsx';
 import Spinner from './components/Spinner/Spinner.jsx';
 
@@ -45,6 +46,7 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<PersonalProfile/>} />
+          { <Route path="/scheduling" element={<Scheduling/>} /> }
       </Routes>
         </main>
         <FooterComponent/>

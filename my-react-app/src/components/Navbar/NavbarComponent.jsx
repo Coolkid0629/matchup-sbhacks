@@ -37,10 +37,10 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            {username}
+            <b>{username}</b>
             <a href="/profile" className="auth-btn login">Profile</a>
           </>
-        )};
+        )}
       </div>
     </nav>
   );
