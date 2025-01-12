@@ -5,13 +5,14 @@ import os
 from embedding_utils import get_embedding
 import struct
 
-# Connect to SingleStore
-conn = s2.connect(host='svc-2d85fc18-3a17-4bcf-800c-160f3fd4e87a-dml.gcp-virginia-1.svc.singlestore.com', port='3306', user='admin',
-                  password='eifmxUSGhaKzGkgDcw6s4iyyr3wcS6WW', database='lunchLink')
-
+def create_connection():
+    return s2.connect(host='svc-2d85fc18-3a17-4bcf-800c-160f3fd4e87a-dml.gcp-virginia-1.svc.singlestore.com', port='3306', user='admin',
+                    password='eifmxUSGhaKzGkgDcw6s4iyyr3wcS6WW', database='lunchLink')
+                    
 SAMPLE_USERS_FILE = "sample_users.json"
 
 def create_tables():
+    conn = create_connection()
     with conn.cursor() as cursor:
         
         cursor.execute("CREATE DATABASE IF NOT EXISTS lunchLink;")
@@ -55,6 +56,7 @@ def load_sample_users():
     if not sample_users:
         print("No users found in sample_users.json")
         return
+    conn = create_connection()
 
     with conn.cursor() as cursor:
         for user in sample_users:
