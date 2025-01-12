@@ -4,7 +4,7 @@ import base64
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import requests
-from models import create_tables, create_connection
+from models import create_tables, conn
 from embedding_utils import get_embedding
 import struct
 import subprocess
@@ -12,21 +12,43 @@ import subprocess
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React frontend
+
 # --- Create Tables ---
 create_tables()
+
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create folder for profile pictures if not exists
 
 def create_user_wallet():
-    """Creates a new Solana wallet and returns the public key and secret key."""
+    """Creates a new Solana wallet and returns the public key and seed phrase (for recovery)."""
     try:
-        result = subprocess.run(["solana-keygen", "new", "--no-outfile"], capture_output=True, text=True)
+        # Run Solana keygen command with a timeout to avoid hanging processes
+        result = subprocess.run(
+            ["solana-keygen", "new", "--no-outfile"],
+            capture_output=True,
+            text=True,
+            timeout=10  # Timeout after 10 seconds if Solana keygen hangs
+        )
+        
+        # Parse the command output
         lines = result.stdout.splitlines()
-        pubkey = [line.split(": ")[1] for line in lines if line.startswith("pubkey")][0]
-        seed_phrase = [line.split(": ")[1] for line in lines if line.startswith("Save this seed phrase")][0]
+        pubkey = next((line.split(": ")[1] for line in lines if line.startswith("pubkey")), None)
+        seed_phrase = next((line.split(": ")[1] for line in lines if "seed phrase" in line.lower()), None)
+
+        if not pubkey or not seed_phrase:
+            print("Error: Solana keygen output missing expected lines.")
+            return None, None
+
+        # Warning: Do not print the seed phrase in production logs!
+        print(f"Public key created: {pubkey}")
+
         return pubkey, seed_phrase
+
+    except subprocess.TimeoutExpired:
+        print("Error: Solana keygen timed out. Ensure Solana CLI is installed and configured.")
+        return None, None
     except Exception as e:
-        print(f"Error creating wallet: {e}")
+        print(f"Unexpected error during wallet creation: {e}")
         return None, None
     
 @app.route('/ping', methods=['GET'])
@@ -41,9 +63,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the uploads folder exists
 def signup():
     try:
         # Get the JSON data from the request
-        print("test1")
         data = request.get_json()
-        print("test2")
         name = data.get('name')
         email = data.get('email')
         password = data.get('password')
@@ -52,9 +72,14 @@ def signup():
         profile_picture_data = data.get('profile_picture')  # Base64 encoded string
         bio = data.get('bio', '')  # Optional short bio, defaults to empty string if not provided
 
+        #wallet_public_key, wallet_secret_key = create_user_wallet()
+        # Temporary placeholder wallet keys
+        wallet_public_key = "TEMP_PUBLIC_KEY_12345"
+        wallet_secret_key = "TEMP_SECRET_KEY_12345"
+
         if not all([name, email, password, interests]):
             return jsonify({"error": "All fields except lunch time, bio, and profile picture are required!"}), 400
-        conn = create_connection()
+
         # Ensure the database connection is open
         if not conn.open:
             conn.ping(reconnect=True)
@@ -79,12 +104,12 @@ def signup():
 
             # Insert new user with bio
             cursor.execute("""
-                INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, profile_picture, bio)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            """, (name, email, password, vector_blob, interests, lunch_time, profile_picture_path, bio))
+            INSERT INTO user_profiles (email, name, password, interests, lunch_time, bio, wallet_public_key, wallet_secret_key)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (email, name, password, interests, lunch_time, bio, wallet_public_key, wallet_secret_key))
             conn.commit()
 
-        return jsonify({"message": "Signup successful!"}), 200
+        return jsonify({"message": "Signup successful!", "wallet_public_key": wallet_public_key}), 201
 
     except Exception as e:
         print(f"Error during signup: {e}")
@@ -99,7 +124,7 @@ def login():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-    conn = create_connection()
+
     with conn.cursor() as cursor:
         cursor.execute("SELECT id, name, email, password FROM user_profiles WHERE email = %s AND password = %s", (email, password))
         user = cursor.fetchone()
@@ -115,6 +140,7 @@ def login():
     }
     return jsonify(user_data), 200
 
+# --- API to Fetch User Data ---
 @app.route('/api/user-data', methods=['POST'])
 def get_user_data():
     try:
@@ -125,20 +151,14 @@ def get_user_data():
         # Check if email and password are provided
         if not email or not password:
             return jsonify({"message": "Email and password are required"}), 400
-        conn = create_connection()
-        # Check if the connection is still open and reconnect if necessary
-        if not conn.open:
-            conn.ping(reconnect=True)
-        print("connection made")
 
         # Query the database for the user
         with conn.cursor() as cursor:
             cursor.execute("""
-                SELECT name, email, interests, lunch_time, profile_picture, status
+                SELECT name, email, interests, lunch_time, profile_picture, status 
                 FROM user_profiles WHERE email = %s AND password = %s
             """, (email, password))
             user = cursor.fetchone()
-        print("user fetched")
 
         if not user:
             return jsonify({"message": "Invalid email or password."}), 401
@@ -158,12 +178,12 @@ def get_user_data():
     except Exception as e:
         print(f"Error fetching user data: {e}")
         return jsonify({"message": "An error occurred."}), 500
-    
+
+
 @app.route('/api/user-count', methods=['POST'])
 def user_count():
     """Return the total count of users."""
     try:
-        conn = create_connection()
         with conn.cursor() as cursor:
             cursor.execute("SELECT COUNT(*) FROM user_profiles")
             count = cursor.fetchone()[0]
@@ -179,7 +199,7 @@ def get_profile_picture():
     email = request.args.get('email')
     if not email:
         return jsonify({"error": "Email is required"}), 400
-    conn = create_connection()
+
     with conn.cursor() as cursor:
         cursor.execute("SELECT profile_picture FROM user_profiles WHERE email = %s", (email,))
         profile_picture_path = cursor.fetchone()
@@ -203,65 +223,107 @@ def deposit_to_user_wallet(user_wallet_address):
 
 import numpy as np
 
+import numpy as np
+
 @app.route('/api/matches', methods=['POST'])
 def get_matches():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-    conn = create_connection()
+
+    # Fetch the current user
     with conn.cursor() as cursor:
-        cursor.execute("SELECT id, name, interests, vector, lunch_time FROM user_profiles WHERE email = %s AND password = %s", (email, password))
+        cursor.execute("""
+            SELECT id, name, interests, vector, lunch_time, bio, wallet_public_key 
+            FROM user_profiles WHERE email = %s AND password = %s
+        """, (email, password))
         current_user = cursor.fetchone()
 
     if not current_user:
         return jsonify({"error": "Invalid email or password"}), 404
 
-    current_user_vector = np.frombuffer(current_user[3], dtype=np.float32)
-    conn = create_connection()
+    current_user_id, current_name, current_interests, current_vector_blob, current_lunch_time, current_bio, current_wallet_public_key = current_user
+    current_user_vector = np.frombuffer(current_vector_blob, dtype=np.float32)
+    current_user_bio = current_bio or ""  # Handle missing bio
+
+    # Generate bio embedding
+    current_user_bio_vector = get_embedding(current_user_bio)
+
+    # Fetch all other users
     with conn.cursor() as cursor:
-        cursor.execute("SELECT id, name, interests, vector, lunch_time FROM user_profiles")
+        cursor.execute("""
+            SELECT id, name, interests, vector, lunch_time, bio, wallet_public_key 
+            FROM user_profiles
+        """)
         users = cursor.fetchall()
 
     user_data = []
-    for u in users:
-        vector = np.frombuffer(u[3], dtype=np.float32)
+    for user in users:
+        other_user_id, other_name, other_interests, other_vector_blob, other_lunch_time, other_bio, other_wallet_public_key = user
+        if current_user_id == other_user_id:
+            continue  # Skip matching the user with themselves
+
+        # Handle vector and bio embedding
+        other_user_vector = np.frombuffer(other_vector_blob, dtype=np.float32)
+        other_user_bio_vector = get_embedding(other_bio or "")
+
         user_data.append({
-            "id": u[0],
-            "name": u[1],
-            "interests": u[2].lower().split(", "),
-            "vector": vector,
-            "lunch_time": u[4]
+            "id": other_user_id,
+            "name": other_name,
+            "interests": other_interests.lower().split(", "),
+            "vector": other_user_vector,
+            "lunch_time": other_lunch_time,
+            "bio_vector": other_user_bio_vector,
+            "wallet_public_key": other_wallet_public_key
         })
 
     matches = []
     for other_user in user_data:
-        if current_user[0] == other_user["id"]:
-            continue
+        if current_lunch_time != other_user["lunch_time"]:
+            continue  # Skip if lunch times do not match
 
-        if current_user[4] != other_user["lunch_time"]:
-            continue
+        # Calculate common interests
+        current_interest_set = set(current_interests.lower().split(", "))
+        other_interest_set = set(other_user["interests"])
+        common_interests = list(current_interest_set.intersection(other_interest_set))
 
-        current_interests = set(current_user[2].lower().split(", "))
-        other_interests = set(other_user["interests"])
-        common_interests = list(current_interests.intersection(other_interests))
-
-        # Cosine similarity
-        similarity = np.dot(current_user_vector, other_user["vector"]) / (
+        # Cosine similarity for interests and bio
+        interests_similarity = np.dot(current_user_vector, other_user["vector"]) / (
             np.linalg.norm(current_user_vector) * np.linalg.norm(other_user["vector"])
         )
+        bio_similarity = np.dot(current_user_bio_vector, other_user["bio_vector"]) / (
+            np.linalg.norm(current_user_bio_vector) * np.linalg.norm(other_user["bio_vector"])
+        )
 
-        # Convert similarity to float for JSON serialization
-        similarity = float(similarity)
+        # Weighted average similarity (70% interests, 30% bio)
+        combined_similarity = 0.7 * interests_similarity + 0.3 * bio_similarity
+
+        # Convert similarities to float for JSON serialization
+        interests_similarity = float(interests_similarity)
+        bio_similarity = float(bio_similarity)
+        combined_similarity = float(combined_similarity)
 
         if common_interests:
             matches.append({
                 "match_name": other_user["name"],
                 "common_interests": common_interests,
-                "similarity": round(similarity, 2),
-                "lunch_time": current_user[4]
+                "interests_similarity": round(interests_similarity, 2),
+                "bio_similarity": round(bio_similarity, 2),
+                "combined_similarity": round(combined_similarity, 2),
+                "lunch_time": current_lunch_time
             })
 
+            # Mint token for each match (placeholder function)
+            if other_user["wallet_public_key"]:
+                print(f"Minting token to {other_user['wallet_public_key']}")
+                # mint_token(other_user["wallet_public_key"])  # Uncomment to mint
+
+    if not matches:
+        return jsonify({"message": "No matches found."}), 200
+
     return jsonify(matches), 200
+
+
 
 
 
@@ -281,7 +343,7 @@ def update_status():
 
     if not user:
         return jsonify({"error": "Invalid email or password"}), 404
-    conn = create_connection()
+
     with conn.cursor() as cursor:
         cursor.execute("UPDATE user_profiles SET status = %s WHERE email = %s", (new_status, email))
         conn.commit()
@@ -298,7 +360,7 @@ def update_lunch_time():
     # Validate input
     if not new_lunch_time:
         return jsonify({"error": "Lunch time is required"}), 400
-    conn = create_connection()
+
     # Verify user with email and password
     with conn.cursor() as cursor:
         cursor.execute("SELECT id FROM user_profiles WHERE email = %s AND password = %s", (email, password))
@@ -306,7 +368,7 @@ def update_lunch_time():
 
     if not user:
         return jsonify({"error": "Invalid email or password"}), 404
-    conn = create_connection
+
     # Update lunch time
     with conn.cursor() as cursor:
         cursor.execute("UPDATE user_profiles SET lunch_time = %s WHERE email = %s", (new_lunch_time, email))
