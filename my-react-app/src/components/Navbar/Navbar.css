@@ -36,6 +36,13 @@
   margin: 0 1rem;
 }
 
+.navbar-a{
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #8f00ff;
+}
+
 .nav-link {
   color: #4b5563;
   text-decoration: none;
