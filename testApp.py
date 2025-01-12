@@ -25,7 +25,6 @@ def signup():
     email = data.get('email')
     password = data.get('password')
     interests = data.get('interests')
-    lunch_time = data.get('lunch_time')
     profile_picture_data = data.get('profile_picture')  # Base64 encoded string
 
     with conn.cursor() as cursor:
@@ -49,10 +48,27 @@ def signup():
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """
     with conn.cursor() as cursor:
-        cursor.execute(sql, (name, email, password, vector_blob, interests, lunch_time, 'active', profile_picture_path))
+        cursor.execute(sql, (name, email, password, vector_blob, interests, 'active', profile_picture_path))
         conn.commit()
 
     return jsonify({"message": "User registered successfully"}), 201
+
+@app.route('/api/lunchTime', methods=['POST'])
+def lunchTime():
+    data = request.get_json()
+    lunch_time = data.get('lunch_time')
+    email = data.get('email')
+    password = data.get('password')
+
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT lunch_time WHERE email = %s AND password = %s", (email, password))
+        user = cursor.fetchone()
+
+    user_data = {
+        "lunch_time": user[0]
+    }
+
+    return jsonify(user_data), 200
 
 # --- API to Handle Login ---
 @app.route('/api/login', methods=['POST'])
