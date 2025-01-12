@@ -5,39 +5,41 @@ const Landing = () => {
   const [activeUsers, setActiveUsers] = useState(null);
   const [totalUsers, setTotalUsers] = useState(null);
 
-  useEffect(() => {
-    // Fetch the number of active users and total users from the Flask backend
-    const fetchUserCount = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:5000/api/user-count", {
-          method: "POST", // Match backend expectation
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({}) // Provide an empty body as required by the backend
-        });
+// ...existing code...
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+useEffect(() => {
+  // Fetch the number of active users and total users from the Flask backend
+  const fetchUserCount = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/api/user-count", {
+        method: "POST", // Match backend expectation
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({}) // Provide an empty body as required by the backend
+      });
 
-        const data = await response.json();
-
-        // Handle data format properly
-        if (data.user_count !== undefined) {
-          setTotalUsers(data.user_count);
-          // Assuming all users are active for now (modify this logic if the backend differentiates active vs total users)
-          setActiveUsers(data.user_count); 
-        } else {
-          console.error('Data format error:', data);
-        }
-      } catch (error) {
-        console.error("Error fetching user count:", error);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
 
-    fetchUserCount();
-  }, []);
+      const data = await response.json();
+
+      // Handle data format properly
+      if (data.user_count !== undefined) {
+        setTotalUsers(data.user_count);
+        setActiveUsers(data.user_count);
+      } else {
+        console.error('Data format error:', data);
+      }
+    } catch (error) {
+      console.error("Error fetching user count:", error);
+    }
+  };
+
+  fetchUserCount();
+}, []);
+// ...existing code...
 
   return (
     <div className="landing-container">

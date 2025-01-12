@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import '../components/Login/Login.css';
+import { Navigate, useNavigate } from "react-router-dom";
 
 function Signup() {
   // State to store form data
@@ -21,6 +22,7 @@ function Signup() {
   });
   const [pic, setPic] = useState("");
 
+  const navigate = useNavigate();
 
   // Handle checkbox change for interests
   const handleInterestChange = (event) => {
@@ -62,6 +64,7 @@ function Signup() {
       if (response.ok) {
         const data = await response.json();
         console.log("Sign-up successful:", data);
+        navigate("/login");
         // Handle successful sign-up (e.g., redirect to login page)
       } else {
         console.error("Sign-up failed:", response.status);
