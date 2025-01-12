@@ -5,7 +5,9 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <span>UCSBites</span>
+        <a href="/">
+          <img src="/Santa_BarBit-A.png" alt="UCSBites Logo" style={{ height: '100px', width: 'auto' }} />
+        </a>
       </div>
       
       <div className="nav-links">
