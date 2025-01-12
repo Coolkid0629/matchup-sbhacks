@@ -50,9 +50,10 @@ def signup():
         interests = data.get('interests')
         lunch_time = data.get('lunch_time', None)  # Default to None if not provided
         profile_picture_data = data.get('profile_picture')  # Base64 encoded string
+        bio = data.get('bio', '')  # Optional short bio, defaults to empty string if not provided
 
         if not all([name, email, password, interests]):
-            return jsonify({"error": "All fields except lunch time and profile picture are required!"}), 400
+            return jsonify({"error": "All fields except lunch time, bio, and profile picture are required!"}), 400
 
         # Ensure the database connection is open
         if not conn.open:
@@ -76,10 +77,11 @@ def signup():
             if cursor.fetchone():
                 return jsonify({"error": "Email already exists"}), 400
 
+            # Insert new user with bio
             cursor.execute("""
-                INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, profile_picture)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """, (name, email, password, vector_blob, interests, lunch_time, profile_picture_path))
+                INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, profile_picture, bio)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (name, email, password, vector_blob, interests, lunch_time, profile_picture_path, bio))
             conn.commit()
 
         return jsonify({"message": "Signup successful!"}), 200
@@ -87,6 +89,7 @@ def signup():
     except Exception as e:
         print(f"Error during signup: {e}")
         return jsonify({"error": "Signup failed due to an error."}), 500
+
 
 
 
@@ -115,40 +118,55 @@ def login():
 # --- API to Fetch User Data ---
 @app.route('/api/user-data', methods=['POST'])
 def get_user_data():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-    # i ove sql :0
-    with conn.cursor() as cursor:
-        cursor.execute("SELECT id, name, email, interests, lunch_time, profile_picture FROM user_profiles WHERE email = %s AND password = %s", (email, password))
-        user = cursor.fetchone()
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
 
-    if not user:
-        return jsonify({"error": "Invalid email or password"}), 404
+        # Check if email and password are provided
+        if not email or not password:
+            return jsonify({"message": "Email and password are required"}), 400
 
-    user_data = {
-        "id": user[0],
-        "name": user[1],
-        "email": user[2],
-        "interests": user[3],
-        "lunch_time": user[4],
-        "profile_picture": f"/api/profile-picture?email={email}" if user[5] else None
-    }
-    return jsonify(user_data), 200
+        # Query the database for the user
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT name, email, interests, lunch_time, profile_picture, status 
+                FROM user_profiles WHERE email = %s AND password = %s
+            """, (email, password))
+            user = cursor.fetchone()
 
-@app.route('/api/user-count', methods=['GET'])
-def get_user_count():
-    """Return the total number of users and active users in the database."""
-    with conn.cursor() as cursor:
-        # Count total users
-        cursor.execute("SELECT COUNT(*) FROM user_profiles")
-        total_users = cursor.fetchone()[0]
+        if not user:
+            return jsonify({"message": "Invalid email or password."}), 401
 
-        # Count active users
-        cursor.execute("SELECT COUNT(*) FROM user_profiles WHERE status = 'active'")
-        active_users = cursor.fetchone()[0]
+        # Build the user data response
+        user_data = {
+            "name": user[0],
+            "email": user[1],
+            "interests": user[2],
+            "lunch_time": user[3] or "Not Set",
+            "profile_picture": user[4] or "No profile picture",
+            "status": user[5] or "active"  # Default to "active" if not set
+        }
 
-    return jsonify({"total_users": total_users, "active_users": active_users}), 200
+        return jsonify(user_data), 200
+
+    except Exception as e:
+        print(f"Error fetching user data: {e}")
+        return jsonify({"message": "An error occurred."}), 500
+
+
+@app.route('/api/user-count', methods=['POST'])
+def user_count():
+    """Return the total count of users."""
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) FROM user_profiles")
+            count = cursor.fetchone()[0]
+        return jsonify({"user_count": count}), 200
+    except Exception as e:
+        print(f"Error fetching user count: {e}")
+        return jsonify({"error": "Failed to fetch user count."}), 500
+
 
 # --- API to Fetch Profile Picture ---
 @app.route('/api/profile-picture', methods=['GET'])
@@ -178,7 +196,8 @@ def deposit_to_user_wallet(user_wallet_address):
         print(f"Error communicating with Solana middleware: {e}")
         return False
 
-# --- API to Fetch Matches ---
+import numpy as np
+
 @app.route('/api/matches', methods=['POST'])
 def get_matches():
     data = request.get_json()
@@ -192,13 +211,22 @@ def get_matches():
     if not current_user:
         return jsonify({"error": "Invalid email or password"}), 404
 
-    import numpy as np
+    current_user_vector = np.frombuffer(current_user[3], dtype=np.float32)
 
     with conn.cursor() as cursor:
         cursor.execute("SELECT id, name, interests, vector, lunch_time FROM user_profiles")
         users = cursor.fetchall()
 
-    user_data = [{"id": u[0], "name": u[1], "interests": u[2].lower().split(", "), "vector": np.frombuffer(u[3], dtype=np.float32).tolist(), "lunch_time": u[4]} for u in users]
+    user_data = []
+    for u in users:
+        vector = np.frombuffer(u[3], dtype=np.float32)
+        user_data.append({
+            "id": u[0],
+            "name": u[1],
+            "interests": u[2].lower().split(", "),
+            "vector": vector,
+            "lunch_time": u[4]
+        })
 
     matches = []
     for other_user in user_data:
@@ -212,9 +240,13 @@ def get_matches():
         other_interests = set(other_user["interests"])
         common_interests = list(current_interests.intersection(other_interests))
 
-        similarity = np.dot(current_user[3], other_user["vector"]) / (
-            np.linalg.norm(current_user[3]) * np.linalg.norm(other_user["vector"])
+        # Cosine similarity
+        similarity = np.dot(current_user_vector, other_user["vector"]) / (
+            np.linalg.norm(current_user_vector) * np.linalg.norm(other_user["vector"])
         )
+
+        # Convert similarity to float for JSON serialization
+        similarity = float(similarity)
 
         if common_interests:
             matches.append({
@@ -224,10 +256,9 @@ def get_matches():
                 "lunch_time": current_user[4]
             })
 
-    if deposit_to_user_wallet(other_user["wallet_address"]):
-        print(f"Deposited 1 SOL to {other_user['wallet_address']}")
-
     return jsonify(matches), 200
+
+
 
 @app.route('/api/update-status', methods=['POST'])
 def update_status():
@@ -251,6 +282,33 @@ def update_status():
         conn.commit()
 
     return jsonify({"message": f"User status updated to '{new_status}'"}), 200
+
+@app.route('/api/update-lunch-time', methods=['POST'])
+def update_lunch_time():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    new_lunch_time = data.get('lunch_time')  # e.g., "12:00 PM"
+
+    # Validate input
+    if not new_lunch_time:
+        return jsonify({"error": "Lunch time is required"}), 400
+
+    # Verify user with email and password
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT id FROM user_profiles WHERE email = %s AND password = %s", (email, password))
+        user = cursor.fetchone()
+
+    if not user:
+        return jsonify({"error": "Invalid email or password"}), 404
+
+    # Update lunch time
+    with conn.cursor() as cursor:
+        cursor.execute("UPDATE user_profiles SET lunch_time = %s WHERE email = %s", (new_lunch_time, email))
+        conn.commit()
+
+    return jsonify({"message": f"Lunch time updated to '{new_lunch_time}'"}), 200
+
 
 
 # --- Run the App ---
