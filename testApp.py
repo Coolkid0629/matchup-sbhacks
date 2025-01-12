@@ -1,6 +1,7 @@
 import os
 import json
-from flask import Flask, request, jsonify
+import base64
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from models import create_tables, conn
 from embedding_utils import get_embedding
@@ -13,6 +14,9 @@ CORS(app)  # Enable CORS for React frontend
 # --- Create Tables ---
 create_tables()
 
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create folder for profile pictures if not exists
+
 # --- API to Handle Signup ---
 @app.route('/api/signup', methods=['POST'])
 def signup():
@@ -22,6 +26,7 @@ def signup():
     password = data.get('password')
     interests = data.get('interests')
     lunch_time = data.get('lunch_time')
+    profile_picture_data = data.get('profile_picture')  # Base64 encoded string
 
     with conn.cursor() as cursor:
         cursor.execute("SELECT 1 FROM user_profiles WHERE email = %s", (email,))
@@ -31,12 +36,20 @@ def signup():
     vector = get_embedding(interests)
     vector_blob = struct.pack(f'{len(vector)}f', *vector)
 
+    # Save profile picture if provided
+    profile_picture_path = None
+    if profile_picture_data:
+        picture_filename = f"{email}_profile.png"
+        profile_picture_path = os.path.join(UPLOAD_FOLDER, picture_filename)
+        with open(profile_picture_path, "wb") as f:
+            f.write(base64.b64decode(profile_picture_data))
+
     sql = """
-    INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, status)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, status, profile_picture)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """
     with conn.cursor() as cursor:
-        cursor.execute(sql, (name, email, password, vector_blob, interests, lunch_time, 'active'))
+        cursor.execute(sql, (name, email, password, vector_blob, interests, lunch_time, 'active', profile_picture_path))
         conn.commit()
 
     return jsonify({"message": "User registered successfully"}), 201
@@ -62,7 +75,7 @@ def login():
     }
     return jsonify(user_data), 200
 
-# --- API to Get User Data ---
+# --- API to Fetch User Data ---
 @app.route('/api/user-data', methods=['POST'])
 def get_user_data():
     data = request.get_json()
@@ -70,7 +83,7 @@ def get_user_data():
     password = data.get('password')
 
     with conn.cursor() as cursor:
-        cursor.execute("SELECT id, name, email, interests, lunch_time FROM user_profiles WHERE email = %s AND password = %s", (email, password))
+        cursor.execute("SELECT id, name, email, interests, lunch_time, profile_picture FROM user_profiles WHERE email = %s AND password = %s", (email, password))
         user = cursor.fetchone()
 
     if not user:
@@ -82,17 +95,33 @@ def get_user_data():
         "email": user[2],
         "interests": user[3],
         "lunch_time": user[4],
+        "profile_picture": f"/api/profile-picture?email={email}" if user[5] else None
     }
     return jsonify(user_data), 200
 
-# --- API to Get Matches ---
+# --- API to Fetch Profile Picture ---
+@app.route('/api/profile-picture', methods=['GET'])
+def get_profile_picture():
+    email = request.args.get('email')
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT profile_picture FROM user_profiles WHERE email = %s", (email,))
+        profile_picture_path = cursor.fetchone()
+
+    if not profile_picture_path or not profile_picture_path[0]:
+        return jsonify({"error": "Profile picture not found"}), 404
+
+    return send_file(profile_picture_path[0], mimetype='image/png')
+
+# --- API to Fetch Matches ---
 @app.route('/api/matches', methods=['POST'])
 def get_matches():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
 
-    # Verify user credentials
     with conn.cursor() as cursor:
         cursor.execute("SELECT id, name, interests, vector, lunch_time FROM user_profiles WHERE email = %s AND password = %s", (email, password))
         current_user = cursor.fetchone()
@@ -102,7 +131,6 @@ def get_matches():
 
     import numpy as np
 
-    # Fetch all users to find matches
     with conn.cursor() as cursor:
         cursor.execute("SELECT id, name, interests, vector, lunch_time FROM user_profiles")
         users = cursor.fetchall()
@@ -112,12 +140,11 @@ def get_matches():
     matches = []
     for other_user in user_data:
         if current_user[0] == other_user["id"]:
-            continue  # Skip if it's the same user
+            continue
 
         if current_user[4] != other_user["lunch_time"]:
-            continue  # Skip if lunch times don't match
+            continue
 
-        # Calculate similarity and common interests
         current_interests = set(current_user[2].lower().split(", "))
         other_interests = set(other_user["interests"])
         common_interests = list(current_interests.intersection(other_interests))
