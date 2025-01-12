@@ -54,7 +54,7 @@ const ApiRequestComponent = () => {
           <div>
             <h3>{bestMatch.match_name}</h3>
             <p>
-              Similarity Score: <strong>{bestMatch.similarity}</strong>
+              Probability of having a great meal together: <strong>{bestMatch.similarity*100}%</strong>
             </p>
             <p>
               Common Interests: <strong>{bestMatch.common_interests.join(', ')}</strong>
