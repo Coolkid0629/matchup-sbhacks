@@ -11,8 +11,14 @@ const Landing = () => {
       try {
         const response = await fetch("http://127.0.0.1:5000/api/user-count");
         const data = await response.json();
-        setActiveUsers(data.active_users);
-        setTotalUsers(data.total_users);
+        
+        // Handle data format properly
+        if (data.total_users !== undefined && data.active_users !== undefined) {
+          setActiveUsers(data.active_users);
+          setTotalUsers(data.total_users);
+        } else {
+          console.error('Data format error:', data);
+        }
       } catch (error) {
         console.error("Error fetching user count:", error);
       }
@@ -41,8 +47,8 @@ const Landing = () => {
           <p>Total Registered Users</p>
         </div>
         <div className="feature-card">
-          <h3>NUM PAIRINGS</h3>
-          <p>in </p>
+          <h3>{activeUsers !== null && totalUsers !== null ? (activeUsers / totalUsers * 100).toFixed(2) : 'Loading...'}</h3>
+          <p>Active Users (%)</p>
         </div>
       </div>
     </div>
