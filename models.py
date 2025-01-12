@@ -5,14 +5,13 @@ import os
 from embedding_utils import get_embedding
 import struct
 
-def create_connection():
-    return s2.connect(host='svc-2d85fc18-3a17-4bcf-800c-160f3fd4e87a-dml.gcp-virginia-1.svc.singlestore.com', port='3306', user='admin',
-                    password='eifmxUSGhaKzGkgDcw6s4iyyr3wcS6WW', database='lunchLink')
-                    
+# Connect to SingleStore
+conn = s2.connect(host='svc-2d85fc18-3a17-4bcf-800c-160f3fd4e87a-dml.gcp-virginia-1.svc.singlestore.com', port='3306', user='admin',
+                  password='eifmxUSGhaKzGkgDcw6s4iyyr3wcS6WW', database='lunchLink')
+
 SAMPLE_USERS_FILE = "sample_users.json"
 
 def create_tables():
-    conn = create_connection()
     with conn.cursor() as cursor:
         
         cursor.execute("CREATE DATABASE IF NOT EXISTS lunchLink;")
@@ -20,16 +19,17 @@ def create_tables():
         cursor.execute("DROP TABLE IF EXISTS user_profiles;")
         create_users_table = """
         CREATE ROWSTORE TABLE user_profiles (
-            id INT PRIMARY KEY AUTO_INCREMENT,
+            email VARCHAR(200) PRIMARY KEY,  -- Use email as the primary key to enforce uniqueness
             name VARCHAR(100),
-            email VARCHAR(200) NOT NULL,
             password VARCHAR(200) NOT NULL,
             vector BLOB,
             interests TEXT,
             lunch_time VARCHAR(50) NULL,
             status VARCHAR(10) DEFAULT 'inactive',
             profile_picture VARCHAR(255) NULL,
-            bio TEXT  -- Comment removed from the middle of SQL
+            bio TEXT,
+            wallet_public_key VARCHAR(100),  -- Public key for wallet
+            wallet_secret_key TEXT  -- Secret key for wallet (should be encrypted in production)
         );
         """
         
@@ -56,7 +56,6 @@ def load_sample_users():
     if not sample_users:
         print("No users found in sample_users.json")
         return
-    conn = create_connection()
 
     with conn.cursor() as cursor:
         for user in sample_users:
