@@ -29,7 +29,9 @@ def create_tables():
             lunch_time VARCHAR(50) NULL,
             status VARCHAR(10) DEFAULT 'inactive',
             profile_picture VARCHAR(255) NULL,
-            bio TEXT  -- Comment removed from the middle of SQL
+            bio TEXT,
+            location VARCHAR(255) NULL,  -- New column for user location
+            most_similar_matches VARCHAR(100) NULL
         );
         """
         
