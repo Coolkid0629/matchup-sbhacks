@@ -4,14 +4,13 @@ import './Waiting.css';
 
 const ApiRequestComponent = () => {
   const [bestMatch, setBestMatch] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Retrieve email and password from cookies
     const email = Cookies.get('username');
     const password = Cookies.get('userpass');
 
     if (email && password) {
-      // Make the API request using the cookies data
       fetch('http://127.0.0.1:5000/api/matches', {
         method: 'POST',
         headers: {
@@ -24,33 +23,48 @@ const ApiRequestComponent = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          // Find the match with the highest similarity
-          const highestMatch = data.reduce((max, match) =>
-            match.similarity > max.similarity ? match : max
-          );
-          setBestMatch(highestMatch); // Set the best match to state
+          if (data && data.length > 0) {
+            // Find the match with the highest similarity score
+            const highestMatch = data.reduce((best, current) =>
+              current.similarity > best.similarity ? current : best
+            );
+            setBestMatch(highestMatch);
+          } else {
+            setBestMatch(null); // No matches found
+          }
         })
         .catch((error) => {
           console.error('Error:', error);
-        });
+          setBestMatch(null); // Handle errors gracefully
+        })
+        .finally(() => setLoading(false));
     } else {
       console.log('No email or password found in cookies.');
+      setLoading(false);
     }
-  }, []); // Empty dependency array to only run on component mount
+  }, []);
 
   return (
     <div className="sponsors-container">
       <div className="sponsors-content">
         <h1>Best Match</h1>
-        {bestMatch ? (
+        {loading ? (
+          <p>Loading...</p>
+        ) : bestMatch ? (
           <div>
             <h3>{bestMatch.match_name}</h3>
-            <p><strong>Similarity:</strong> {bestMatch.similarity}</p>
-            <p><strong>Lunch Time:</strong> {bestMatch.lunch_time}</p>
-            <p><strong>Common Interests:</strong> {bestMatch.common_interests.join(', ')}</p>
+            <p>
+              Similarity Score: <strong>{bestMatch.similarity}</strong>
+            </p>
+            <p>
+              Common Interests: <strong>{bestMatch.common_interests.join(', ')}</strong>
+            </p>
+            <p>
+              Lunch Time: <strong>{bestMatch.lunch_time}</strong>
+            </p>
           </div>
         ) : (
-          <p>Loading...</p>
+          <p>No match found.</p>
         )}
       </div>
     </div>
