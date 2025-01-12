@@ -7,7 +7,7 @@ import struct
 
 # Connect to SingleStore
 conn = s2.connect(host='svc-2d85fc18-3a17-4bcf-800c-160f3fd4e87a-dml.gcp-virginia-1.svc.singlestore.com', port='3306', user='admin',
-                  password='yRvwS48EZszpsQwpT9JOYnpfSg1Wu3HH', database='lunchLink')
+                  password='eifmxUSGhaKzGkgDcw6s4iyyr3wcS6WW', database='lunchLink')
 
 SAMPLE_USERS_FILE = "sample_users.json"
 
