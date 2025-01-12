@@ -5,8 +5,11 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <a href="/">
-          <img src="/Santa_BarBit-A.png" alt="UCSBites Logo" style={{ height: '100px', width: 'auto' }} />
+        <a href="/" className="navbar-a">
+          <img src="/Santa_BarBit-A2.png" alt="UCSBites Logo" style={{ height: '100px', width: 'auto' }} />
+          &nbsp;
+          &nbsp;
+          <span>UCSBites</span>
         </a>
       </div>
       
