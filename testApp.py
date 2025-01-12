@@ -99,6 +99,20 @@ def get_user_data():
     }
     return jsonify(user_data), 200
 
+@app.route('/api/user-count', methods=['GET'])
+def get_user_count():
+    """Return the total number of users and active users in the database."""
+    with conn.cursor() as cursor:
+        # Count total users
+        cursor.execute("SELECT COUNT(*) FROM user_profiles")
+        total_users = cursor.fetchone()[0]
+
+        # Count active users
+        cursor.execute("SELECT COUNT(*) FROM user_profiles WHERE status = 'active'")
+        active_users = cursor.fetchone()[0]
+
+    return jsonify({"total_users": total_users, "active_users": active_users}), 200
+
 # --- API to Fetch Profile Picture ---
 @app.route('/api/profile-picture', methods=['GET'])
 def get_profile_picture():
@@ -114,6 +128,8 @@ def get_profile_picture():
         return jsonify({"error": "Profile picture not found"}), 404
 
     return send_file(profile_picture_path[0], mimetype='image/png')
+
+
 
 # --- API to Fetch Matches ---
 @app.route('/api/matches', methods=['POST'])
