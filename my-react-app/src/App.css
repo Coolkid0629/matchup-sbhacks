@@ -8,4 +8,5 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding-top: 100px; /* Account for navbar height (100px) + padding (32px) */
 }
