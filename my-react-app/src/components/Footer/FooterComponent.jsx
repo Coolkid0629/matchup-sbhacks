@@ -16,8 +16,6 @@ const FooterComponent = () => {
           <a href="#" className="footer-link">Terms</a>
         </div>
         <div className="footer-social">
-          <a href="#" className="social-link">Twitter</a>
-          <a href="#" className="social-link">LinkedIn</a>
           <a href="https://github.com/Coolkid0629/matchup-sbhacks/tree/main" className="social-link">GitHub</a>
         </div>
       </div>

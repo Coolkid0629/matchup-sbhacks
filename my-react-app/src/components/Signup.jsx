@@ -19,6 +19,8 @@ function Signup() {
     sports: false,
     travel: false
   });
+  const [pic, setPic] = useState("");
+
 
   // Handle checkbox change for interests
   const handleInterestChange = (event) => {
@@ -43,7 +45,8 @@ function Signup() {
       password: password,
       bio: bio,
       interests: Object.keys(interests).filter((interest) => interests[interest]).join(", "),
-      profile_picture: "test"
+      profile_picture: pic
+
     };
     console.log(signupData)
 
@@ -96,6 +99,17 @@ function Signup() {
             className="form-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="formGroupImage">
+          <Form.Label className="form-label">Image Link:</Form.Label>
+          <Form.Control
+            type="URL"
+            placeholder="Enter a link to your image here!"
+            className="form-input"
+            value={pic}
+            onChange={(e) => setPic(e.target.value)}
           />
         </Form.Group>
 

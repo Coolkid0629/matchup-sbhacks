@@ -37,6 +37,7 @@ export default function PersonalProfile() {
 
         const data = await response.json();
         setUserData(data); // Update the state with user data
+        console.log(data)
       } catch (err) {
         console.error("Error fetching user data:", err);
         setError("Failed to load user profile.");
@@ -63,10 +64,10 @@ export default function PersonalProfile() {
               <MDBRow className="g-0">
                 <MDBCol md="4" className="gradient-custom text-center text-white"
                   style={{ borderTopLeftRadius: '.5rem', borderBottomLeftRadius: '.5rem', backgroundColor: '#8f00ff' }}>
-                  <MDBCardImage src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                  <MDBCardImage src={userData.profile_picture} 
                     alt="Avatar" className="my-5" style={{ width: '80px' }} fluid />
-                  <MDBTypography tag="h5">Marie Horwitz</MDBTypography>
-                  <MDBCardText>Web Designer</MDBCardText>
+                  <MDBTypography tag="h5">{userData.name}.</MDBTypography>
+                  <MDBCardText>{userData.interests}</MDBCardText>
                   <MDBIcon far icon="edit mb-5" />
                 </MDBCol>
                 <MDBCol md="8">
@@ -76,11 +77,11 @@ export default function PersonalProfile() {
                     <MDBRow className="pt-1">
                       <MDBCol size="6" className="mb-3">
                         <MDBTypography tag="h6">Email</MDBTypography>
-                        <MDBCardText className="text-muted">info@example.com</MDBCardText>
+                        <MDBCardText className="text-muted">{userData.email}</MDBCardText>
                       </MDBCol>
                       <MDBCol size="6" className="mb-3">
                         <MDBTypography tag="h6">Phone</MDBTypography>
-                        <MDBCardText className="text-muted">123 456 789</MDBCardText>
+                        <MDBCardText className="text-muted">{userData.lunchTime}</MDBCardText>
                       </MDBCol>
                     </MDBRow>
 
