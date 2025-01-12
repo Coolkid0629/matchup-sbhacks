@@ -26,9 +26,9 @@ def create_tables():
             vector BLOB,
             interests TEXT,
             lunch_time VARCHAR(50) NULL,
-            status VARCHAR(20) DEFAULT 'active',
-            profile_picture VARCHAR(255) NULL,  -- Column to store the profile picture path
-            UNIQUE KEY (id, email)
+            status VARCHAR(10) DEFAULT 'inactive',
+            profile_picture VARCHAR(255) NULL,
+            bio TEXT  -- Comment removed from the middle of SQL
         );
         """
         
