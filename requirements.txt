@@ -8,11 +8,8 @@ Flask==3.1.0
 Flask_Cors==5.0.0
 HTMLParser==0.0.2
 ipython==8.12.3
-ipywidgets==8.1.5
-jnius==1.1.0
 keyring==25.6.0
 numpy==2.2.1
-Pillow==11.1.0
 protobuf==5.29.3
 pyOpenSSL==24.3.0
 redis==5.2.1
