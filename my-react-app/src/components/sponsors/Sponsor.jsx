@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Sponser.css';
+import './Sponsor.css';
 
 const Sponsors = () => {
   const [sponsors, setSponsors] = useState([
