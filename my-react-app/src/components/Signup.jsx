@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import './Login/Login.css';
-import Login from './Login/Login.jsx';
+import '../components/Login/Login.css';
 
 function Signup() {
   return (

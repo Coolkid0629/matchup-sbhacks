@@ -35,7 +35,7 @@ function Login() {
           </a>
           <p>
             Don’t have an account?{" "}
-            <a href="#sign-up" className="sign-up">
+            <a href="/signup" className="sign-up">
               Sign Up
             </a>
           </p>
