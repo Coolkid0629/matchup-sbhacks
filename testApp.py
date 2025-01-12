@@ -4,7 +4,7 @@ import base64
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import requests
-from models import create_tables, conn
+from models import create_tables, create_connection
 from embedding_utils import get_embedding
 import struct
 import subprocess
@@ -54,7 +54,7 @@ def signup():
 
         if not all([name, email, password, interests]):
             return jsonify({"error": "All fields except lunch time, bio, and profile picture are required!"}), 400
-
+        conn = create_connection()
         # Ensure the database connection is open
         if not conn.open:
             conn.ping(reconnect=True)
@@ -99,7 +99,7 @@ def login():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-
+    conn = create_connection()
     with conn.cursor() as cursor:
         cursor.execute("SELECT id, name, email, password FROM user_profiles WHERE email = %s AND password = %s", (email, password))
         user = cursor.fetchone()
@@ -125,10 +125,11 @@ def get_user_data():
         # Check if email and password are provided
         if not email or not password:
             return jsonify({"message": "Email and password are required"}), 400
-
+        conn = create_connection()
         # Check if the connection is still open and reconnect if necessary
         if not conn.open:
             conn.ping(reconnect=True)
+        print("connection made")
 
         # Query the database for the user
         with conn.cursor() as cursor:
@@ -137,18 +138,19 @@ def get_user_data():
                 FROM user_profiles WHERE email = %s AND password = %s
             """, (email, password))
             user = cursor.fetchone()
+        print("user fetched")
 
         if not user:
             return jsonify({"message": "Invalid email or password."}), 401
 
         # Build the user data response
         user_data = {
-            "name": user['name'],
-            "email": user['email'],
-            "interests": user['interests'],
-            "lunch_time": user['lunch_time'] or "Not Set",
-            "profile_picture": user['profile_picture'] or "No profile picture",
-            "status": user['status'] or "active"  # Default to "active" if not set
+            "name": user[0],
+            "email": user[1],
+            "interests": user[2],
+            "lunch_time": user[3] or "Not Set",
+            "profile_picture": user[4] or "No profile picture",
+            "status": user[5] or "active"  # Default to "active" if not set
         }
 
         return jsonify(user_data), 200
@@ -161,6 +163,7 @@ def get_user_data():
 def user_count():
     """Return the total count of users."""
     try:
+        conn = create_connection()
         with conn.cursor() as cursor:
             cursor.execute("SELECT COUNT(*) FROM user_profiles")
             count = cursor.fetchone()[0]
@@ -176,7 +179,7 @@ def get_profile_picture():
     email = request.args.get('email')
     if not email:
         return jsonify({"error": "Email is required"}), 400
-
+    conn = create_connection()
     with conn.cursor() as cursor:
         cursor.execute("SELECT profile_picture FROM user_profiles WHERE email = %s", (email,))
         profile_picture_path = cursor.fetchone()
@@ -205,7 +208,7 @@ def get_matches():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-
+    conn = create_connection()
     with conn.cursor() as cursor:
         cursor.execute("SELECT id, name, interests, vector, lunch_time FROM user_profiles WHERE email = %s AND password = %s", (email, password))
         current_user = cursor.fetchone()
@@ -214,7 +217,7 @@ def get_matches():
         return jsonify({"error": "Invalid email or password"}), 404
 
     current_user_vector = np.frombuffer(current_user[3], dtype=np.float32)
-
+    conn = create_connection()
     with conn.cursor() as cursor:
         cursor.execute("SELECT id, name, interests, vector, lunch_time FROM user_profiles")
         users = cursor.fetchall()
@@ -278,7 +281,7 @@ def update_status():
 
     if not user:
         return jsonify({"error": "Invalid email or password"}), 404
-
+    conn = create_connection()
     with conn.cursor() as cursor:
         cursor.execute("UPDATE user_profiles SET status = %s WHERE email = %s", (new_status, email))
         conn.commit()
@@ -295,7 +298,7 @@ def update_lunch_time():
     # Validate input
     if not new_lunch_time:
         return jsonify({"error": "Lunch time is required"}), 400
-
+    conn = create_connection()
     # Verify user with email and password
     with conn.cursor() as cursor:
         cursor.execute("SELECT id FROM user_profiles WHERE email = %s AND password = %s", (email, password))
@@ -303,7 +306,7 @@ def update_lunch_time():
 
     if not user:
         return jsonify({"error": "Invalid email or password"}), 404
-
+    conn = create_connection
     # Update lunch time
     with conn.cursor() as cursor:
         cursor.execute("UPDATE user_profiles SET lunch_time = %s WHERE email = %s", (new_lunch_time, email))
