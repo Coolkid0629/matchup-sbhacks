@@ -1,8 +1,7 @@
-// TimeSelector.jsx
 import React, { useState } from 'react';
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import './Scheduling.css'; 
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 
 const TimeSelector = () => {
   const generateTimes = () => {
@@ -19,19 +18,18 @@ const TimeSelector = () => {
 
   const times = generateTimes();
   const [selectedTime, setSelectedTime] = useState('');
-    // Get email and password from cookies
-    const email = Cookies.get("username");
-    const password = Cookies.get("userpass");
 
-    if (!email || !password) {
-        console.error("User is not logged in. Missing cookies.");
-        return;}
+  const email = Cookies.get("username");
+  const password = Cookies.get("userpass");
 
+  if (!email || !password) {
+      console.error("User is not logged in. Missing cookies.");
+      return;
+  }
 
   const handleClick = (time) => {
     setSelectedTime(time);
 
-    // Send API request with the selected time
     fetch('http://127.0.0.1:5000/api/update-lunch-time', {
       method: 'POST',
       headers: {
@@ -41,7 +39,7 @@ const TimeSelector = () => {
         email: email,
         password: password,
         lunch_time: time
-        }),
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -61,7 +59,7 @@ const TimeSelector = () => {
               <Button 
                 key={index} 
                 variant="purple" 
-                className={`mb-2 w-100 ${selectedTime === time ? 'active' : ''}`} 
+                className={`mb-3 w-100 ${selectedTime === time ? 'active' : ''}`} 
                 onClick={() => handleClick(time)}
               >
                 {time}
