@@ -31,8 +31,6 @@ const TimeSelector = () => {
       return;
   }
 
-  const navigate = useNavigate();
-
   const handleClick = (time) => {
     setSelectedTime(time);
 
