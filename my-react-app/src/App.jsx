@@ -48,7 +48,7 @@ function AppContent() {
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<PersonalProfile/>} />
           <Route path="/sponser" element={<Sponser/>} />
-          { <Route path="/scheduling" element={<Scheduling/>} /> }
+          <Route path="/scheduling" element={<Scheduling/>} />
       </Routes>
         </main>
         <FooterComponent/>

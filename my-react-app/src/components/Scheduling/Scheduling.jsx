@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import './Scheduling.css'; // Import the styling
 
 function Matches() {
   const [matches, setMatches] = useState([]);
-  
+
   useEffect(() => {
     // Get email and password from cookies
     const email = Cookies.get("username");
