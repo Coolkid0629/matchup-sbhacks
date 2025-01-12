@@ -38,13 +38,12 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the uploads folder exists
 
 @app.route('/api/signup', methods=['POST'])
-
-
-
 def signup():
     try:
         # Get the JSON data from the request
+        print("test1")
         data = request.get_json()
+        print("test2")
         name = data.get('name')
         email = data.get('email')
         password = data.get('password')
