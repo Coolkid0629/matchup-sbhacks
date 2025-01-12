@@ -25,7 +25,6 @@ def signup():
     email = data.get('email')
     password = data.get('password')
     interests = data.get('interests')
-    lunch_time = data.get('lunch_time')
     profile_picture_data = data.get('profile_picture')  # Base64 encoded string
 
     with conn.cursor() as cursor:
@@ -49,10 +48,27 @@ def signup():
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """
     with conn.cursor() as cursor:
-        cursor.execute(sql, (name, email, password, vector_blob, interests, lunch_time, 'active', profile_picture_path))
+        cursor.execute(sql, (name, email, password, vector_blob, interests, 'active', profile_picture_path))
         conn.commit()
 
     return jsonify({"message": "User registered successfully"}), 201
+
+@app.route('/api/lunchTime', methods=['POST'])
+def lunchTime():
+    data = request.get_json()
+    lunch_time = data.get('lunch_time')
+    email = data.get('email')
+    password = data.get('password')
+
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT lunch_time WHERE email = %s AND password = %s", (email, password))
+        user = cursor.fetchone()
+
+    user_data = {
+        "lunch_time": user[0]
+    }
+
+    return jsonify(user_data), 200
 
 # --- API to Handle Login ---
 @app.route('/api/login', methods=['POST'])
@@ -62,7 +78,7 @@ def login():
     password = data.get('password')
 
     with conn.cursor() as cursor:
-        cursor.execute("SELECT id, name, email FROM user_profiles WHERE email = %s AND password = %s", (email, password))
+        cursor.execute("SELECT id, name, email, password FROM user_profiles WHERE email = %s AND password = %s", (email, password))
         user = cursor.fetchone()
 
     if not user:
@@ -72,6 +88,7 @@ def login():
         "id": user[0],
         "name": user[1],
         "email": user[2],
+        "password": user[3]
     }
     return jsonify(user_data), 200
 
@@ -100,6 +117,20 @@ def get_user_data():
     }
     return jsonify(user_data), 200
 
+@app.route('/api/user-count', methods=['GET'])
+def get_user_count():
+    """Return the total number of users and active users in the database."""
+    with conn.cursor() as cursor:
+        # Count total users
+        cursor.execute("SELECT COUNT(*) FROM user_profiles")
+        total_users = cursor.fetchone()[0]
+
+        # Count active users
+        cursor.execute("SELECT COUNT(*) FROM user_profiles WHERE status = 'active'")
+        active_users = cursor.fetchone()[0]
+
+    return jsonify({"total_users": total_users, "active_users": active_users}), 200
+
 # --- API to Fetch Profile Picture ---
 @app.route('/api/profile-picture', methods=['GET'])
 def get_profile_picture():
@@ -115,6 +146,8 @@ def get_profile_picture():
         return jsonify({"error": "Profile picture not found"}), 404
 
     return send_file(profile_picture_path[0], mimetype='image/png')
+
+
 
 # --- API to Fetch Matches ---
 @app.route('/api/matches', methods=['POST'])
