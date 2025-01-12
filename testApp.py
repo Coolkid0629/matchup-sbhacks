@@ -1,6 +1,7 @@
 import os
 import json
 import base64
+import random
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import requests
@@ -192,6 +193,32 @@ def deposit_to_user_wallet(user_wallet_address):
 
 import numpy as np
 
+def generate_conversation_starter(bio1, bio2, interests1, interests2):
+    common_interests = interests1.intersection(interests2)
+    if common_interests:
+        interest = random.choice(list(common_interests))
+        return f"Both of you are interested in {interest}. What got you into it?"
+
+    if bio1 and bio2:
+        return f"You both seem really passionate. {bio1.split('.')[0]}. How does that align with your goals?"
+
+    return "What do you usually enjoy discussing during lunch?"
+
+
+import random
+
+def generate_conversation_starter(bio1, bio2, interests1, interests2):
+    """Generates a conversation starter based on bios and common interests."""
+    common_interests = interests1.intersection(interests2)
+    if common_interests:
+        interest = random.choice(list(common_interests))
+        return f"Both of you are interested in {interest}. What got you into it?"
+
+    if bio1 and bio2:
+        return f"You both seem passionate! {bio1.split('.')[0]}. What inspires you to keep going?"
+
+    return "What do you usually enjoy discussing during lunch?"
+
 @app.route('/api/matches', methods=['POST'])
 def get_matches():
     data = request.get_json()
@@ -200,7 +227,6 @@ def get_matches():
 
     conn = create_connection()
     with conn.cursor() as cursor:
-        # Fetch the current user's profile
         cursor.execute("SELECT id, name, interests, vector, lunch_time, location, bio FROM user_profiles WHERE email = %s AND password = %s", (email, password))
         current_user = cursor.fetchone()
 
@@ -208,11 +234,11 @@ def get_matches():
         return jsonify({"error": "Invalid email or password"}), 404
 
     current_user_vector = np.frombuffer(current_user[3], dtype=np.float32)
-    current_user_location = current_user[5]  # Location of the current user
+    current_user_location = current_user[5]
+    current_user_bio = current_user[6]
 
     conn = create_connection()
     with conn.cursor() as cursor:
-        # Fetch all users from the database
         cursor.execute("SELECT id, name, email, interests, vector, lunch_time, location, bio FROM user_profiles")
         users = cursor.fetchall()
 
@@ -236,24 +262,23 @@ def get_matches():
 
     for other_user in user_data:
         if current_user[0] == other_user["id"]:
-            continue  # Skip the current user
+            continue
 
         if current_user[4] != other_user["lunch_time"]:
-            continue  # Skip users with different lunch times
+            continue
 
         if current_user_location != other_user["location"]:
-            continue  # Skip users with different locations
+            continue
 
         current_interests = set(current_user[2].lower().split(", "))
         other_interests = set(other_user["interests"])
         common_interests = list(current_interests.intersection(other_interests))
 
-        # Cosine similarity
         similarity = np.dot(current_user_vector, other_user["vector"]) / (
             np.linalg.norm(current_user_vector) * np.linalg.norm(other_user["vector"])
         )
 
-        similarity = float(similarity)  # Convert similarity to float for JSON serialization
+        similarity = float(similarity)
 
         if common_interests:
             matches.append({
@@ -266,27 +291,40 @@ def get_matches():
                 "location": current_user_location
             })
 
-            # Track the most similar user
             if similarity > highest_similarity:
                 highest_similarity = similarity
-                most_similar_user = {
-                    "id": other_user["id"],
-                    "name": other_user["name"],
-                    "email": other_user["email"],
-                    "similarity": round(similarity, 2)
-                }
+                most_similar_user = other_user
 
-    # Update the most similar user in the database
+    # Generate conversation starter based on common interests and bios
+    conversation_starter = None
     if most_similar_user:
+        conversation_starter = generate_conversation_starter(
+            current_user_bio, most_similar_user["bio"], current_interests, other_interests
+        )
+
+        most_similar_info = {
+            "id": most_similar_user["id"],
+            "name": most_similar_user["name"],
+            "email": most_similar_user["email"],
+            "similarity": round(highest_similarity, 2),
+            "conversation_starter": conversation_starter
+        }
+
         with conn.cursor() as cursor:
             cursor.execute("""
                 UPDATE user_profiles
                 SET most_similar_matches = %s
                 WHERE email = %s
-            """, (json.dumps(most_similar_user), email))
+            """, (json.dumps(most_similar_info), email))
             conn.commit()
 
-    return jsonify({"matches": matches, "most_similar_user": most_similar_user}), 200
+    return jsonify({
+        "matches": matches,
+        "most_similar_user": most_similar_info if most_similar_user else None,
+        "conversation_starter": conversation_starter
+    }), 200
+
+
 
 
 
