@@ -12,6 +12,7 @@ import Landing from './components/Landing/Landing.jsx';
 import PersonalProfile from './components/Profile/ProfileCard.jsx';
 import Spinner from './components/Spinner/Spinner.jsx';
 import TimeSelector from './components/Scheduling/Scheduling.jsx';
+import Sponsors from './components/sponsers/Sponser.jsx';
 
 // Wrapper component to handle route change loading states
 function AppContent() {
@@ -46,6 +47,7 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<PersonalProfile/>} />
+          <Route path="/sponser" element={<Sponsors/>} />
           { <Route path="/scheduling" element={<TimeSelector/>} /> }
       </Routes>
         </main>
