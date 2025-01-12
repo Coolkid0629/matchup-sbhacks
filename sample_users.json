@@ -3,84 +3,16 @@
         "name": "user1",
         "email": "user1@gmail.com",
         "password": "1",
-        "interests": "red, green, blue",
-        "lunch_time": "12:00 PM"
+        "interests": "red, green. blue",
+        "lunch_time": "12:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/73.jpg"
     },
     {
         "name": "user2",
         "email": "user2@gmail.com",
         "password": "1",
         "interests": "red",
-        "lunch_time": "12:00 PM"
-    },
-    {
-        "name": "user3",
-        "email": "user3@gmail.com",
-        "password": "1",
-        "interests": "photography, hiking, cooking",
-        "lunch_time": "1:00 PM"
-    },
-    {
-        "name": "user4",
-        "email": "user4@gmail.com",
-        "password": "1",
-        "interests": "gaming, programming, astronomy",
-        "lunch_time": "12:30 PM"
-    },
-    {
-        "name": "user5",
-        "email": "user5@gmail.com",
-        "password": "1",
-        "interests": "yoga, painting, reading",
-        "lunch_time": "11:45 AM"
-    },
-    {
-        "name": "user6",
-        "email": "user6@gmail.com",
-        "password": "1",
-        "interests": "cycling, robotics, woodworking",
-        "lunch_time": "1:15 PM"
-    },
-    {
-        "name": "user7",
-        "email": "user7@gmail.com",
-        "password": "1",
-        "interests": "travel, gardening, languages",
-        "lunch_time": "12:00 PM"
-    },
-    {
-        "name": "user8",
-        "email": "user8@gmail.com",
-        "password": "1",
-        "interests": "fashion, dancing, poetry",
-        "lunch_time": "12:45 PM"
-    },
-    {
-        "name": "user9",
-        "email": "user9@gmail.com",
-        "password": "1",
-        "interests": "meditation, photography, chess",
-        "lunch_time": "12:15 PM"
-    },
-    {
-        "name": "user10",
-        "email": "user10@gmail.com",
-        "password": "1",
-        "interests": "fishing, cooking, gaming",
-        "lunch_time": "1:00 PM"
-    },
-    {
-        "name": "user11",
-        "email": "user11@gmail.com",
-        "password": "1",
-        "interests": "drawing, running, history",
-        "lunch_time": "11:30 AM"
-    },
-    {
-        "name": "user12",
-        "email": "user12@gmail.com",
-        "password": "1",
-        "interests": "technology, music, writing",
-        "lunch_time": "12:00 PM"
+        "lunch_time": "12:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/73.jpg"
     }
 ]
