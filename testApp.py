@@ -306,7 +306,7 @@ def update_lunch_time():
 
     if not user:
         return jsonify({"error": "Invalid email or password"}), 404
-    conn = create_connection
+    conn = create_connection()
     # Update lunch time
     with conn.cursor() as cursor:
         cursor.execute("UPDATE user_profiles SET lunch_time = %s WHERE email = %s", (new_lunch_time, email))
