@@ -5,7 +5,8 @@
         "password": "1",
         "interests": "red, green, blue",
         "lunch_time": "12:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/73.jpg"
+        "image_url": "https://randomuser.me/api/portraits/women/73.jpg",
+        "status": "active"
     },
     {
         "name": "user2",
@@ -13,223 +14,251 @@
         "password": "1",
         "interests": "red",
         "lunch_time": "12:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/73.jpg"
+        "image_url": "https://randomuser.me/api/portraits/men/73.jpg",
+        "status": "inactive"
     },
     {
         "name": "user3",
         "email": "user3@gmail.com",
         "password": "1",
-        "interests": "blue, yellow",
+        "interests": "green, yellow",
         "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/74.jpg"
+        "image_url": "https://randomuser.me/api/portraits/women/45.jpg",
+        "status": "active"
     },
     {
         "name": "user4",
         "email": "user4@gmail.com",
         "password": "1",
-        "interests": "green, red",
-        "lunch_time": "12:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/74.jpg"
+        "interests": "blue, purple",
+        "lunch_time": "2:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/56.jpg",
+        "status": "inactive"
     },
     {
         "name": "user5",
         "email": "user5@gmail.com",
         "password": "1",
-        "interests": "red, green",
-        "lunch_time": "12:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/75.jpg"
+        "interests": "red, blue",
+        "lunch_time": "12:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/62.jpg",
+        "status": "active"
     },
     {
         "name": "user6",
         "email": "user6@gmail.com",
         "password": "1",
-        "interests": "blue, green",
+        "interests": "green, yellow",
         "lunch_time": "1:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/75.jpg"
+        "image_url": "https://randomuser.me/api/portraits/men/62.jpg",
+        "status": "inactive"
     },
     {
         "name": "user7",
         "email": "user7@gmail.com",
         "password": "1",
-        "interests": "green, yellow",
+        "interests": "blue, purple",
         "lunch_time": "12:15 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/76.jpg"
+        "image_url": "https://randomuser.me/api/portraits/women/55.jpg",
+        "status": "active"
     },
     {
         "name": "user8",
         "email": "user8@gmail.com",
         "password": "1",
-        "interests": "red, blue",
+        "interests": "red, green",
         "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/76.jpg"
+        "image_url": "https://randomuser.me/api/portraits/men/59.jpg",
+        "status": "inactive"
     },
     {
         "name": "user9",
         "email": "user9@gmail.com",
         "password": "1",
-        "interests": "green, blue, purple",
-        "lunch_time": "12:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/77.jpg"
+        "interests": "yellow, blue",
+        "lunch_time": "2:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/57.jpg",
+        "status": "active"
     },
     {
         "name": "user10",
         "email": "user10@gmail.com",
         "password": "1",
-        "interests": "yellow, red",
-        "lunch_time": "12:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/77.jpg"
+        "interests": "green, red",
+        "lunch_time": "12:45 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/72.jpg",
+        "status": "inactive"
     },
     {
         "name": "user11",
         "email": "user11@gmail.com",
         "password": "1",
-        "interests": "blue, red, green",
-        "lunch_time": "1:15 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/78.jpg"
+        "interests": "blue",
+        "lunch_time": "12:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/66.jpg",
+        "status": "active"
     },
     {
         "name": "user12",
         "email": "user12@gmail.com",
         "password": "1",
-        "interests": "green, red, purple",
-        "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/78.jpg"
+        "interests": "red, green, yellow",
+        "lunch_time": "1:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/65.jpg",
+        "status": "inactive"
     },
     {
         "name": "user13",
         "email": "user13@gmail.com",
         "password": "1",
-        "interests": "blue",
-        "lunch_time": "12:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/79.jpg"
+        "interests": "green, yellow, blue",
+        "lunch_time": "12:45 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/67.jpg",
+        "status": "active"
     },
     {
         "name": "user14",
         "email": "user14@gmail.com",
         "password": "1",
-        "interests": "yellow, green",
-        "lunch_time": "12:15 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/79.jpg"
+        "interests": "blue, purple, green",
+        "lunch_time": "2:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/63.jpg",
+        "status": "inactive"
     },
     {
         "name": "user15",
         "email": "user15@gmail.com",
         "password": "1",
-        "interests": "blue, red",
-        "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/80.jpg"
+        "interests": "red, blue",
+        "lunch_time": "12:15 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/49.jpg",
+        "status": "active"
     },
     {
         "name": "user16",
         "email": "user16@gmail.com",
         "password": "1",
         "interests": "green, purple",
-        "lunch_time": "12:45 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/80.jpg"
+        "lunch_time": "1:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/48.jpg",
+        "status": "inactive"
     },
     {
         "name": "user17",
         "email": "user17@gmail.com",
         "password": "1",
-        "interests": "red, yellow, green",
+        "interests": "yellow, blue, red",
         "lunch_time": "12:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/81.jpg"
+        "image_url": "https://randomuser.me/api/portraits/women/68.jpg",
+        "status": "active"
     },
     {
         "name": "user18",
         "email": "user18@gmail.com",
         "password": "1",
-        "interests": "blue, green",
-        "lunch_time": "1:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/81.jpg"
+        "interests": "green, blue",
+        "lunch_time": "2:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/50.jpg",
+        "status": "inactive"
     },
     {
         "name": "user19",
         "email": "user19@gmail.com",
         "password": "1",
-        "interests": "purple, yellow",
+        "interests": "blue, green",
         "lunch_time": "12:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/82.jpg"
+        "image_url": "https://randomuser.me/api/portraits/women/51.jpg",
+        "status": "active"
     },
     {
         "name": "user20",
         "email": "user20@gmail.com",
         "password": "1",
-        "interests": "red, blue",
-        "lunch_time": "1:15 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/82.jpg"
+        "interests": "purple, yellow",
+        "lunch_time": "1:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/61.jpg",
+        "status": "inactive"
     },
     {
         "name": "user21",
         "email": "user21@gmail.com",
         "password": "1",
-        "interests": "green",
-        "lunch_time": "12:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/83.jpg"
+        "interests": "green, blue",
+        "lunch_time": "12:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/64.jpg",
+        "status": "active"
     },
     {
         "name": "user22",
         "email": "user22@gmail.com",
         "password": "1",
-        "interests": "blue, green",
-        "lunch_time": "12:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/83.jpg"
+        "interests": "yellow, green",
+        "lunch_time": "1:15 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/57.jpg",
+        "status": "inactive"
     },
     {
         "name": "user23",
         "email": "user23@gmail.com",
         "password": "1",
-        "interests": "red, yellow",
-        "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/84.jpg"
+        "interests": "red, green, blue",
+        "lunch_time": "12:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/72.jpg",
+        "status": "active"
     },
     {
         "name": "user24",
         "email": "user24@gmail.com",
         "password": "1",
-        "interests": "green, blue, red",
-        "lunch_time": "12:15 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/84.jpg"
+        "interests": "purple, blue, yellow",
+        "lunch_time": "1:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/69.jpg",
+        "status": "inactive"
     },
     {
         "name": "user25",
         "email": "user25@gmail.com",
         "password": "1",
-        "interests": "blue, green",
-        "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/85.jpg"
+        "interests": "blue, red",
+        "lunch_time": "2:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/75.jpg",
+        "status": "active"
     },
     {
         "name": "user26",
         "email": "user26@gmail.com",
         "password": "1",
-        "interests": "red, green, yellow",
-        "lunch_time": "12:45 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/85.jpg"
+        "interests": "green, purple",
+        "lunch_time": "1:15 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/66.jpg",
+        "status": "inactive"
     },
     {
         "name": "user27",
         "email": "user27@gmail.com",
         "password": "1",
         "interests": "blue, yellow",
-        "lunch_time": "12:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/86.jpg"
+        "lunch_time": "12:45 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/56.jpg",
+        "status": "active"
     },
     {
         "name": "user28",
         "email": "user28@gmail.com",
         "password": "1",
-        "interests": "yellow, green",
-        "lunch_time": "1:15 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/86.jpg"
+        "interests": "red, blue",
+        "lunch_time": "1:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/53.jpg",
+        "status": "inactive"
     },
     {
         "name": "user29",
         "email": "user29@gmail.com",
         "password": "1",
-        "interests": "blue, green",
-        "lunch_time": "12:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/87.jpg"
+        "interests": "green, yellow",
+        "lunch_time": "2:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/61.jpg",
+        "status": "active"
     },
     {
         "name": "user30",
@@ -237,166 +266,187 @@
         "password": "1",
         "interests": "purple, red",
         "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/87.jpg"
+        "image_url": "https://randomuser.me/api/portraits/men/55.jpg",
+        "status": "inactive"
     },
     {
         "name": "user31",
         "email": "user31@gmail.com",
         "password": "1",
-        "interests": "green, blue",
-        "lunch_time": "12:15 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/88.jpg"
+        "interests": "blue, purple",
+        "lunch_time": "12:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/60.jpg",
+        "status": "active"
     },
     {
         "name": "user32",
         "email": "user32@gmail.com",
         "password": "1",
-        "interests": "red, yellow",
-        "lunch_time": "12:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/88.jpg"
+        "interests": "yellow, green",
+        "lunch_time": "2:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/50.jpg",
+        "status": "inactive"
     },
     {
         "name": "user33",
         "email": "user33@gmail.com",
         "password": "1",
-        "interests": "blue, yellow, green",
-        "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/89.jpg"
+        "interests": "red, green",
+        "lunch_time": "12:15 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/49.jpg",
+        "status": "active"
     },
     {
         "name": "user34",
         "email": "user34@gmail.com",
         "password": "1",
-        "interests": "red, green",
-        "lunch_time": "12:45 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/89.jpg"
+        "interests": "yellow, red",
+        "lunch_time": "1:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/51.jpg",
+        "status": "inactive"
     },
     {
         "name": "user35",
         "email": "user35@gmail.com",
         "password": "1",
-        "interests": "blue, green",
-        "lunch_time": "12:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/90.jpg"
+        "interests": "green, purple",
+        "lunch_time": "12:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/50.jpg",
+        "status": "active"
     },
     {
         "name": "user36",
         "email": "user36@gmail.com",
         "password": "1",
-        "interests": "yellow, red",
-        "lunch_time": "1:15 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/90.jpg"
+        "interests": "blue, purple, yellow",
+        "lunch_time": "2:15 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/56.jpg",
+        "status": "inactive"
     },
     {
         "name": "user37",
         "email": "user37@gmail.com",
         "password": "1",
-        "interests": "blue, purple",
+        "interests": "green, blue",
         "lunch_time": "12:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/91.jpg"
+        "image_url": "https://randomuser.me/api/portraits/women/67.jpg",
+        "status": "active"
     },
     {
         "name": "user38",
         "email": "user38@gmail.com",
         "password": "1",
-        "interests": "green, yellow",
+        "interests": "yellow, blue",
         "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/91.jpg"
+        "image_url": "https://randomuser.me/api/portraits/men/70.jpg",
+        "status": "inactive"
     },
     {
         "name": "user39",
         "email": "user39@gmail.com",
         "password": "1",
-        "interests": "yellow, purple",
-        "lunch_time": "12:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/92.jpg"
+        "interests": "red, yellow",
+        "lunch_time": "12:15 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/53.jpg",
+        "status": "active"
     },
     {
         "name": "user40",
         "email": "user40@gmail.com",
         "password": "1",
-        "interests": "red, green, yellow",
-        "lunch_time": "1:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/92.jpg"
+        "interests": "blue, green",
+        "lunch_time": "2:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/68.jpg",
+        "status": "inactive"
     },
     {
         "name": "user41",
         "email": "user41@gmail.com",
         "password": "1",
-        "interests": "green",
-        "lunch_time": "12:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/93.jpg"
+        "interests": "green, yellow",
+        "lunch_time": "12:45 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/54.jpg",
+        "status": "active"
     },
     {
         "name": "user42",
         "email": "user42@gmail.com",
         "password": "1",
         "interests": "blue, red",
-        "lunch_time": "12:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/93.jpg"
+        "lunch_time": "1:15 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/72.jpg",
+        "status": "inactive"
     },
     {
         "name": "user43",
         "email": "user43@gmail.com",
         "password": "1",
-        "interests": "green, yellow",
-        "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/94.jpg"
+        "interests": "yellow, green",
+        "lunch_time": "12:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/65.jpg",
+        "status": "active"
     },
     {
         "name": "user44",
         "email": "user44@gmail.com",
         "password": "1",
-        "interests": "blue, purple, green",
-        "lunch_time": "1:15 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/94.jpg"
+        "interests": "red, blue, yellow",
+        "lunch_time": "1:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/73.jpg",
+        "status": "inactive"
     },
     {
         "name": "user45",
         "email": "user45@gmail.com",
         "password": "1",
-        "interests": "yellow, green",
-        "lunch_time": "12:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/95.jpg"
+        "interests": "green, yellow",
+        "lunch_time": "2:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/68.jpg",
+        "status": "active"
     },
     {
         "name": "user46",
         "email": "user46@gmail.com",
         "password": "1",
-        "interests": "green, red",
-        "lunch_time": "12:15 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/95.jpg"
+        "interests": "blue, green",
+        "lunch_time": "1:00 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/59.jpg",
+        "status": "inactive"
     },
     {
         "name": "user47",
         "email": "user47@gmail.com",
         "password": "1",
-        "interests": "blue, yellow",
-        "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/96.jpg"
+        "interests": "red, yellow",
+        "lunch_time": "12:45 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/74.jpg",
+        "status": "active"
     },
     {
         "name": "user48",
         "email": "user48@gmail.com",
         "password": "1",
-        "interests": "yellow, red",
-        "lunch_time": "12:30 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/96.jpg"
+        "interests": "blue, yellow",
+        "lunch_time": "2:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/men/52.jpg",
+        "status": "inactive"
     },
     {
         "name": "user49",
         "email": "user49@gmail.com",
         "password": "1",
-        "interests": "red, blue, green",
-        "lunch_time": "12:15 PM",
-        "image_url": "https://randomuser.me/api/portraits/men/97.jpg"
+        "interests": "green, blue",
+        "lunch_time": "12:30 PM",
+        "image_url": "https://randomuser.me/api/portraits/women/73.jpg",
+        "status": "active"
     },
     {
         "name": "user50",
         "email": "user50@gmail.com",
         "password": "1",
-        "interests": "green, red, yellow",
+        "interests": "yellow, red",
         "lunch_time": "1:00 PM",
-        "image_url": "https://randomuser.me/api/portraits/women/97.jpg"
+        "image_url": "https://randomuser.me/api/portraits/men/74.jpg",
+        "status": "inactive"
     }
 ]
