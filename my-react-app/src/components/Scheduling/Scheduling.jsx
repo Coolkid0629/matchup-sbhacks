@@ -1,94 +1,76 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from 'react';
+import { Button, Container, Row, Col } from 'react-bootstrap';
+import './Scheduling.css'; 
 import Cookies from "js-cookie";
 import './Scheduling.css'; // Import the styling
 
-function Matches() {
-  const [matches, setMatches] = useState([]);
+const TimeSelector = () => {
+  const generateTimes = () => {
+    const times = [];
+    let currentTime = new Date();
+    currentTime.setHours(8, 0, 0, 0); 
+    while (currentTime.getHours() < 22 || (currentTime.getHours() === 22 && currentTime.getMinutes() === 0)) {
+      times.push(currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      currentTime.setMinutes(currentTime.getMinutes() + 15); 
+    }
+    return times;
+  };
+  
 
-  useEffect(() => {
-    // Get email and password from cookies
-    const email = Cookies.get("username");
-    const password = Cookies.get("userpass");
+  const times = generateTimes();
+  const [selectedTime, setSelectedTime] = useState('');
 
-    if (!email || !password) {
+  const email = Cookies.get("username");
+  const password = Cookies.get("userpass");
+
+  if (!email || !password) {
       console.error("User is not logged in. Missing cookies.");
       return;
-    }
+  }
 
-    // Set the user status to active when the component is mounted
-    updateUserStatus("active", email, password);
+  const handleClick = (time) => {
+    setSelectedTime(time);
 
-    // Fetch matches for the logged-in user
-    fetchMatches(email, password);
-
-    // Cleanup function to set the status to inactive when the user leaves the page (optional)
-    return () => {
-      updateUserStatus("inactive", email, password);
-    };
-  }, []);
-
-  const updateUserStatus = async (status, email, password) => {
-    const statusData = { email, password, status };
-
-    try {
-      const response = await fetch("http://127.0.0.1:5000/api/update-status", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(statusData),
+    fetch('http://127.0.0.1:5000/api/update-lunch-time', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        email: email,
+        password: password,
+        lunch_time: time
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('API Response:', data);
+      })
+      .catch((error) => {
+        console.error('Error sending API request:', error);
       });
-
-      if (!response.ok) {
-        console.error("Failed to update status:", await response.json());
-      }
-    } catch (error) {
-      console.error("Error updating user status:", error);
-    }
-  };
-
-  const fetchMatches = async (email, password) => {
-    const userData = { email, password };
-
-    try {
-      const response = await fetch("http://127.0.0.1:5000/api/matches", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setMatches(data);
-      } else {
-        console.error("Failed to fetch matches:", await response.json());
-      }
-    } catch (error) {
-      console.error("Error fetching matches:", error);
-    }
   };
 
   return (
-    <div className="matches-container">
-      <h2>Your Matches</h2>
-      {matches.length > 0 ? (
-        <div className="match-list">
-          {matches.map((match, index) => (
-            <div key={index} className="match-card">
-              <h3>{match.match_name}</h3>
-              <p><strong>Common Interests:</strong> {match.common_interests.join(", ")}</p>
-              <p><strong>Similarity Score:</strong> {match.similarity}</p>
-              <p><strong>Lunch Time:</strong> {match.lunch_time}</p>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>No matches found. Please check back later!</p>
-      )}
-    </div>
+    <Container className="d-flex justify-content-center align-items-center vh-100"> 
+      <Row>
+        <Col xs={12} md={6}>
+          <div className="p-3 scrollable-container"> 
+            {times.map((time, index) => (
+              <Button 
+                key={index} 
+                variant="purple" 
+                className={`mb-3 w-100 ${selectedTime === time ? 'active' : ''}`} 
+                onClick={() => handleClick(time)}
+              >
+                {time}
+              </Button>
+            ))}
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
-}
+};
 
-export default Matches;
+export default TimeSelector;

@@ -59,7 +59,7 @@ const Landing = () => {
           <p>Total Registered Users</p>
         </div>
         <div className="feature-card">
-          <h3>{activeUsers !== null && totalUsers !== null ? ((activeUsers / totalUsers) * 100).toFixed(2) : 'Loading...'}</h3>
+          <h3>{(activeUsers !== null && totalUsers !== null && totalUsers !== 0) ? ((activeUsers / totalUsers) * 100).toFixed(2) : 'Loading...'}</h3>
           <p>Active Users (%)</p>
         </div>
       </div>

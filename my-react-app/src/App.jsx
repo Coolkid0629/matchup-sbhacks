@@ -8,11 +8,13 @@ import About from './components/About/About.jsx'
 import NavbarComponent from './components/Navbar/NavbarComponent.jsx';
 import FooterComponent from './components/Footer/FooterComponent.jsx';
 import Landing from './components/Landing/Landing.jsx';
-import Scheduling from './components/Scheduling/Scheduling.jsx';
 //import ProfilePage from './components/Profile/Profile.jsx';
 import PersonalProfile from './components/Profile/ProfileCard.jsx';
 import Spinner from './components/Spinner/Spinner.jsx';
-import Sponser from './components/sponsers/Sponser.jsx';
+import TimeSelector from './components/Scheduling/Scheduling.jsx';
+import Sponsors from './components/sponsors/Sponsor.jsx';
+import Waiting from './components/Waiting/Waiting.jsx';
+import DecisionPage from './components/Pairings/Pairings.jsx';
 
 // Wrapper component to handle route change loading states
 function AppContent() {
@@ -47,8 +49,10 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<PersonalProfile/>} />
-          <Route path="/sponser" element={<Sponser/>} />
-          <Route path="/scheduling" element={<Scheduling/>} />
+          <Route path="/sponsor" element={<Sponsors/>} />
+          <Route path="/scheduling" element={<TimeSelector/>} /> 
+          <Route path="/waiting" element={<Waiting />} />
+          <Route path="/pairings" element={<DecisionPage/>} />
       </Routes>
         </main>
         <FooterComponent/>
