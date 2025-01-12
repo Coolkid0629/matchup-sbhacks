@@ -44,7 +44,7 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            {username}
+            <b>{username}</b>
             <a href="/profile" className="auth-btn login">Profile</a>
             <button href="/" className='auth-btn signup' onClick={handleLogout}>Logout</button>
           </>
