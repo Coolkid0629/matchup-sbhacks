@@ -78,7 +78,7 @@ def login():
     password = data.get('password')
 
     with conn.cursor() as cursor:
-        cursor.execute("SELECT id, name, email FROM user_profiles WHERE email = %s AND password = %s", (email, password))
+        cursor.execute("SELECT id, name, email, password FROM user_profiles WHERE email = %s AND password = %s", (email, password))
         user = cursor.fetchone()
 
     if not user:
@@ -88,6 +88,7 @@ def login():
         "id": user[0],
         "name": user[1],
         "email": user[2],
+        "password": user[3]
     }
     return jsonify(user_data), 200
 
