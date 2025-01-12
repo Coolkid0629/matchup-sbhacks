@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Button, Container, Row, Col } from 'react-bootstrap';
-import './Scheduling.css'; 
-import Cookies from "js-cookie";
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+import './Scheduling.css';
 
 const TimeSelector = () => {
   const generateTimes = () => {
@@ -27,6 +28,8 @@ const TimeSelector = () => {
       return;
   }
 
+  const navigate = useNavigate();
+
   const handleClick = (time) => {
     setSelectedTime(time);
 
@@ -35,19 +38,14 @@ const TimeSelector = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ 
-        email: email,
-        password: password,
-        lunch_time: time
-      }),
+      body: JSON.stringify({ email, time }),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('API Response:', data);
-      })
-      .catch((error) => {
-        console.error('Error sending API request:', error);
-      });
+    .then(() => {
+      navigate('/waiting');
+    })
+    .catch((error) => {
+      console.error('Error sending API request:', error);
+    });
   };
 
   return (
