@@ -47,6 +47,7 @@ function AppContent() {
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<PersonalProfile/>} />
           { <Route path="/scheduling" element={<TimeSelector/>} /> }
+          <Route path ="/pairings" element={<Time }
       </Routes>
         </main>
         <FooterComponent/>
