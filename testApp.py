@@ -274,6 +274,7 @@ def update_status():
 
     if new_status not in ["active", "inactive"]:
         return jsonify({"error": "Invalid status value. Use 'active' or 'inactive'"}), 400
+    conn = create_connection()
 
     with conn.cursor() as cursor:
         cursor.execute("SELECT id FROM user_profiles WHERE email = %s AND password = %s", (email, password))
@@ -281,7 +282,6 @@ def update_status():
 
     if not user:
         return jsonify({"error": "Invalid email or password"}), 404
-    conn = create_connection()
     with conn.cursor() as cursor:
         cursor.execute("UPDATE user_profiles SET status = %s WHERE email = %s", (new_status, email))
         conn.commit()
@@ -311,6 +311,7 @@ def update_lunch_time():
     with conn.cursor() as cursor:
         cursor.execute("UPDATE user_profiles SET lunch_time = %s WHERE email = %s", (new_lunch_time, email))
         conn.commit()
+        
 
     return jsonify({"message": f"Lunch time updated to '{new_lunch_time}'"}), 200
 
