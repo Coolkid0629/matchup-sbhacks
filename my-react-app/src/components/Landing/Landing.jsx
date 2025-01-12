@@ -14,16 +14,16 @@ const Landing = () => {
       </div>
       <div className="landing-features">
         <div className="feature-card">
-          <h3>1000's</h3>
+          <h3>GET NUM FROM FLASK</h3>
           <p>of people looking to connect</p>
         </div>
         <div className="feature-card">
-          <h3>$10,000+</h3>
-          <p>in crypto</p>
+          <h3>4</h3>
+          <p>Dining Hall Locations</p>
         </div>
         <div className="feature-card">
-          <h3>50+</h3>
-          <p>eating locations</p>
+          <h3>NUM PAIRINGS</h3>
+          <p>in </p>
         </div>
       </div>
     </div>
