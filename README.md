@@ -1,4 +1,3 @@
 # matchup-sbhacks
 
-DEEZ NUTS
-NO HOLY COWW!
+SB HACKS 2025
