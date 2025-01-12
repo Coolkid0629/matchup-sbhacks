@@ -1,4 +1,4 @@
-.landing-container {
+.sponser-container {
   min-height: 100vh;
   padding-top: 5rem;
   background: linear-gradient(135deg, rgba(143, 0, 255, 0.1), rgba(112, 0, 204, 0.1));
@@ -10,7 +10,7 @@
   text-align: center;
 }
 
-.landing-content {
+.sponser-content {
   max-width: 800px;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.5);
@@ -18,18 +18,15 @@
   border-radius: 1rem;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
-.btn-a {
-    text-decoration: none;
-}
 
-.landing-content h1 {
+.sponser-content h1 {
   font-size: 3.5rem;
   color: #8f00ff;
   margin-bottom: 1rem;
   font-weight: 700;
 }
 
-.landing-content p {
+.sponser-content p {
   font-size: 1.25rem;
   color: #4b5563;
   margin-bottom: 2rem;
@@ -72,7 +69,7 @@
   transform: translateY(-2px);
 }
 
-.landing-features {
+.sponser-info {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
@@ -81,7 +78,7 @@
   width: 100%;
 }
 
-.feature-card {
+.info-card {
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);
   padding: 2rem;
@@ -90,33 +87,40 @@
   transition: transform 0.3s ease;
 }
 
-.feature-card:hover {
+.info-card:hover {
   transform: translateY(-5px);
 }
 
-.feature-card h3 {
+.info-card h3 {
   color: #8f00ff;
   font-size: 2rem;
   margin-bottom: 0.5rem;
   font-weight: 700;
 }
 
-.feature-card p {
+.info-card p {
   color: #4b5563;
   font-size: 1.1rem;
 }
 
-/* Responsive Design */
+.tech-stack ul, .tried-using ul {
+  list-style-type: none;
+  padding-left: 0;
+  text-align: left;
+}
+
+.tech-stack li, .tried-using li {
+  font-size: 1.1rem;
+  color: #4b5563;
+}
+
+.tried-using p {
+  font-size: 1.1rem;
+  color: #4b5563;
+}
+
 @media (max-width: 768px) {
-  .landing-content h1 {
-    font-size: 2.5rem;
-  }
-
-  .landing-content p {
-    font-size: 1.1rem;
-  }
-
-  .landing-features {
+  .sponser-info {
     grid-template-columns: 1fr;
   }
 

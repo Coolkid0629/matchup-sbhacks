@@ -40,7 +40,7 @@ function Login() {
         const data = await response.json();
         Cookies.set("username", data.email);
         Cookies.set("userpass", data.password);
-        navigate("/profile");
+        navigate("/");
         // You can redirect or update the UI based on the response here
       } else {
         const errorData = await response.json();
