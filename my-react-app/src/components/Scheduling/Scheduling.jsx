@@ -33,13 +33,23 @@ const TimeSelector = () => {
 
   const handleClick = (time) => {
     setSelectedTime(time);
+    console.log({email, password, time});
+    const request = {
+      email: email,
+      password: password,
+      time: "" + time,
+    }
+
+    const lunch_time = time
+
+
 
     fetch('http://127.0.0.1:5000/api/update-lunch-time', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, time }),
+      body: JSON.stringify({email, password, lunch_time}),
     })
     .then(() => {
       navigate('/waiting');
