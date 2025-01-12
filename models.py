@@ -29,6 +29,7 @@ def create_tables():
             status VARCHAR(20) DEFAULT 'active',
             profile_picture VARCHAR(255),  -- Column to store the profile picture path
             UNIQUE KEY (id, email)
+            wallet_address VARCHAR(100),  -- New field for Solana wallet address
         );
         """
         
