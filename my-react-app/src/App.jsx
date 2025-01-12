@@ -9,8 +9,8 @@ import NavbarComponent from './components/Navbar/NavbarComponent.jsx';
 import FooterComponent from './components/Footer/FooterComponent.jsx';
 import Landing from './components/Landing/landing.jsx';
 import ProfilePage from './components/Profile/Profile.jsx';
+import PersonalProfile from './components/Profile/ProfileCard.jsx';
 import Spinner from './components/Spinner/Spinner.jsx';
-import Trial from './components/trial.jsx';
 
 // Wrapper component to handle route change loading states
 function AppContent() {
@@ -44,12 +44,11 @@ function AppContent() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About />} />
-          <Route path="/profile" element={<ProfilePage/>} />
-          <Route path="/trial" element={<Trial/>} />
-        </Routes>
-      </main>
-      <FooterComponent/>
-    </div>
+          <Route path="/profile" element={<PersonalProfile/>} />
+      </Routes>
+        </main>
+        <FooterComponent/>
+      </div>
   );
 }
 

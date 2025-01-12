@@ -1,6 +1,6 @@
 .profile-container {
     text-align: center;
-    padding: 20px;
+    padding: px;
   }
   
   .profile-header {
@@ -22,4 +22,8 @@
   .profile-error {
     color: red;
     font-weight: bold;
+  }
+
+  :root {
+    padding-top: 100px;
   }
