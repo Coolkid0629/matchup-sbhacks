@@ -195,7 +195,8 @@ def deposit_to_user_wallet(user_wallet_address):
         print(f"Error communicating with Solana middleware: {e}")
         return False
 
-# --- API to Fetch Matches ---
+import numpy as np
+
 @app.route('/api/matches', methods=['POST'])
 def get_matches():
     data = request.get_json()
@@ -209,13 +210,22 @@ def get_matches():
     if not current_user:
         return jsonify({"error": "Invalid email or password"}), 404
 
-    import numpy as np
+    current_user_vector = np.frombuffer(current_user[3], dtype=np.float32)
 
     with conn.cursor() as cursor:
         cursor.execute("SELECT id, name, interests, vector, lunch_time FROM user_profiles")
         users = cursor.fetchall()
 
-    user_data = [{"id": u[0], "name": u[1], "interests": u[2].lower().split(", "), "vector": np.frombuffer(u[3], dtype=np.float32).tolist(), "lunch_time": u[4]} for u in users]
+    user_data = []
+    for u in users:
+        vector = np.frombuffer(u[3], dtype=np.float32)
+        user_data.append({
+            "id": u[0],
+            "name": u[1],
+            "interests": u[2].lower().split(", "),
+            "vector": vector,
+            "lunch_time": u[4]
+        })
 
     matches = []
     for other_user in user_data:
@@ -229,9 +239,13 @@ def get_matches():
         other_interests = set(other_user["interests"])
         common_interests = list(current_interests.intersection(other_interests))
 
-        similarity = np.dot(current_user[3], other_user["vector"]) / (
-            np.linalg.norm(current_user[3]) * np.linalg.norm(other_user["vector"])
+        # Cosine similarity
+        similarity = np.dot(current_user_vector, other_user["vector"]) / (
+            np.linalg.norm(current_user_vector) * np.linalg.norm(other_user["vector"])
         )
+
+        # Convert similarity to float for JSON serialization
+        similarity = float(similarity)
 
         if common_interests:
             matches.append({
@@ -241,10 +255,9 @@ def get_matches():
                 "lunch_time": current_user[4]
             })
 
-    if deposit_to_user_wallet(other_user["wallet_address"]):
-        print(f"Deposited 1 SOL to {other_user['wallet_address']}")
-
     return jsonify(matches), 200
+
+
 
 @app.route('/api/update-status', methods=['POST'])
 def update_status():
@@ -268,6 +281,33 @@ def update_status():
         conn.commit()
 
     return jsonify({"message": f"User status updated to '{new_status}'"}), 200
+
+@app.route('/api/update-lunch-time', methods=['POST'])
+def update_lunch_time():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    new_lunch_time = data.get('lunch_time')  # e.g., "12:00 PM"
+
+    # Validate input
+    if not new_lunch_time:
+        return jsonify({"error": "Lunch time is required"}), 400
+
+    # Verify user with email and password
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT id FROM user_profiles WHERE email = %s AND password = %s", (email, password))
+        user = cursor.fetchone()
+
+    if not user:
+        return jsonify({"error": "Invalid email or password"}), 404
+
+    # Update lunch time
+    with conn.cursor() as cursor:
+        cursor.execute("UPDATE user_profiles SET lunch_time = %s WHERE email = %s", (new_lunch_time, email))
+        conn.commit()
+
+    return jsonify({"message": f"Lunch time updated to '{new_lunch_time}'"}), 200
+
 
 
 # --- Run the App ---
