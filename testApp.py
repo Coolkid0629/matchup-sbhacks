@@ -163,6 +163,30 @@ def get_matches():
 
     return jsonify(matches), 200
 
+@app.route('/api/update-status', methods=['POST'])
+def update_status():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    new_status = data.get('status')  # Accepts "active" or "inactive"
+
+    if new_status not in ["active", "inactive"]:
+        return jsonify({"error": "Invalid status value. Use 'active' or 'inactive'"}), 400
+
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT id FROM user_profiles WHERE email = %s AND password = %s", (email, password))
+        user = cursor.fetchone()
+
+    if not user:
+        return jsonify({"error": "Invalid email or password"}), 404
+
+    with conn.cursor() as cursor:
+        cursor.execute("UPDATE user_profiles SET status = %s WHERE email = %s", (new_status, email))
+        conn.commit()
+
+    return jsonify({"message": f"User status updated to '{new_status}'"}), 200
+
+
 # --- Run the App ---
 if __name__ == "__main__":
     app.run(debug=True)
