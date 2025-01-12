@@ -1,4 +1,4 @@
-.sponser-container {
+.sponsors-container {
   min-height: 100vh;
   padding-top: 5rem;
   background: linear-gradient(135deg, rgba(143, 0, 255, 0.1), rgba(112, 0, 204, 0.1));
@@ -10,7 +10,7 @@
   text-align: center;
 }
 
-.sponser-content {
+.sponsors-content {
   max-width: 800px;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.5);
@@ -19,57 +19,20 @@
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.sponser-content h1 {
+.sponsors-content h1 {
   font-size: 3.5rem;
   color: #8f00ff;
   margin-bottom: 1rem;
   font-weight: 700;
 }
 
-.sponser-content p {
+.sponsors-content p {
   font-size: 1.25rem;
   color: #4b5563;
   margin-bottom: 2rem;
 }
 
-.cta-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-}
-
-.primary-btn, .secondary-btn {
-  padding: 0.75rem 2rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: none;
-}
-
-.primary-btn {
-  background: #8f00ff;
-  color: white;
-}
-
-.primary-btn:hover {
-  background: #7000cc;
-  transform: translateY(-2px);
-}
-
-.secondary-btn {
-  background: transparent;
-  border: 2px solid #8f00ff;
-  color: #8f00ff;
-}
-
-.secondary-btn:hover {
-  background: rgba(143, 0, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-.sponser-info {
+.sponsors-gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
@@ -78,57 +41,54 @@
   width: 100%;
 }
 
-.info-card {
+.sponsor-card {
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(10px);
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  text-align: center;
 }
 
-.info-card:hover {
+.sponsor-card:hover {
   transform: translateY(-5px);
 }
 
-.info-card h3 {
+.sponsor-card h3 {
   color: #8f00ff;
   font-size: 2rem;
   margin-bottom: 0.5rem;
   font-weight: 700;
 }
 
-.info-card p {
+.sponsor-card p {
   color: #4b5563;
   font-size: 1.1rem;
 }
 
-.tech-stack ul, .tried-using ul {
-  list-style-type: none;
-  padding-left: 0;
-  text-align: left;
+.sponsor-logo {
+  width: 100%;
+  height: auto;
+  margin-bottom: 1rem;
 }
 
-.tech-stack li, .tried-using li {
-  font-size: 1.1rem;
-  color: #4b5563;
-}
-
-.tried-using p {
-  font-size: 1.1rem;
-  color: #4b5563;
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
-  .sponser-info {
+  .sponsors-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .sponsors-content p {
+    font-size: 1.1rem;
+  }
+
+  .sponsors-gallery {
     grid-template-columns: 1fr;
   }
 
-  .cta-buttons {
-    flex-direction: column;
-  }
-
-  .primary-btn, .secondary-btn {
+  .sponsor-card {
     width: 100%;
+    padding: 1.5rem;
   }
 }
