@@ -1,7 +1,60 @@
-import React from 'react';
+import {React, useState, useEffect} from 'react';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
+import Cookies from "js-cookie";
 
 export default function PersonalProfile() {
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Retrieve the cookie data
+    const email = Cookies.get("username");
+    const password = Cookies.get("userpass"); // Assuming password is also stored securely
+    console.log(email, password);
+
+    if (!email || !password) {
+      setError("User not logged in or session expired.");
+      return;
+    }
+    const loginData = {
+      email: email,
+      password: password,
+    }
+
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:5000/api/user-data", {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(loginData), // Send email and password as JSON
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data.");
+        }
+
+        const data = await response.json();
+        setUserData(data); // Update the state with user data
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        setError("Failed to load user profile.");
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <section className="vh-100" style={{ backgroundColor: '#f4f5f7' }}>
       <MDBContainer className="py-5 h-100">

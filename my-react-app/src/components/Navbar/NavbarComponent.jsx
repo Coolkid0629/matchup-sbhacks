@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 import './Navbar.css'; // Import the CSS styles
 
 const Navbar = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    const username = Cookies.get('username');
+    const userpass = Cookies.get('userpass');
+    setUsername(username);
+    setIsLoggedIn(!!username && !!userpass);
+  }, []);
   return (
     <nav className="navbar">
       <div className="navbar-brand">
@@ -20,8 +30,17 @@ const Navbar = () => {
       </div>
 
       <div className="nav-auth">
-        <a href="/login" className="auth-btn login">Login</a>
-        <a href="/signup" className="auth-btn signup">Sign Up</a>
+        {!isLoggedIn ? (
+          <>
+            <a href="/login" className="auth-btn login">Login</a>
+            <a href="/signup" className="auth-btn signup">Sign Up</a>
+          </>
+        ) : (
+          <>
+            {username}
+            <a href="/profile" className="auth-btn login">Profile</a>
+          </>
+        )};
       </div>
     </nav>
   );

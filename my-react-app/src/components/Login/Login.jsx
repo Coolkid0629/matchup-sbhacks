@@ -23,6 +23,7 @@ function Login() {
       email: email,
       password: password,
     };
+    console.log(loginData);
 
     try {
       // Make the POST request to the server
@@ -43,6 +44,7 @@ function Login() {
         // You can redirect or update the UI based on the response here
       } else {
         const errorData = await response.json();
+        console.log(errorData);
         setError(errorData.message || "Login failed. Please try again.");
         setLoginFailed(true);
       }
