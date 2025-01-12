@@ -50,9 +50,10 @@ def signup():
         interests = data.get('interests')
         lunch_time = data.get('lunch_time', None)  # Default to None if not provided
         profile_picture_data = data.get('profile_picture')  # Base64 encoded string
+        bio = data.get('bio', '')  # Optional short bio, defaults to empty string if not provided
 
         if not all([name, email, password, interests]):
-            return jsonify({"error": "All fields except lunch time and profile picture are required!"}), 400
+            return jsonify({"error": "All fields except lunch time, bio, and profile picture are required!"}), 400
 
         # Ensure the database connection is open
         if not conn.open:
@@ -76,10 +77,11 @@ def signup():
             if cursor.fetchone():
                 return jsonify({"error": "Email already exists"}), 400
 
+            # Insert new user with bio
             cursor.execute("""
-                INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, profile_picture)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """, (name, email, password, vector_blob, interests, lunch_time, profile_picture_path))
+                INSERT INTO user_profiles (name, email, password, vector, interests, lunch_time, profile_picture, bio)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (name, email, password, vector_blob, interests, lunch_time, profile_picture_path, bio))
             conn.commit()
 
         return jsonify({"message": "Signup successful!"}), 200
@@ -87,6 +89,7 @@ def signup():
     except Exception as e:
         print(f"Error during signup: {e}")
         return jsonify({"error": "Signup failed due to an error."}), 500
+
 
 
 
